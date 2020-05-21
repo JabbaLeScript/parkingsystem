@@ -15,6 +15,7 @@ public class InteractiveShell {
         System.out.println("Welcome to Parking System!");
 
         boolean continueApp = true;
+
         InputReaderUtil inputReaderUtil = new InputReaderUtil();
         ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
         TicketDAO ticketDAO = new TicketDAO();
