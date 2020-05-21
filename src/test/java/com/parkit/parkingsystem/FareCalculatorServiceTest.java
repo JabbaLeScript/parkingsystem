@@ -102,7 +102,7 @@ public class FareCalculatorServiceTest {
 
         //ASSERT
         //assert that the parking fee is 0 if user < 30
-        assertThat(ticket.getPrice()).isEqualTo(0.0 * Fare.CAR_RATE_PER_HOUR);
+        assertThat(ticket.getPrice()).isEqualTo(0.0);
 
     }
 
