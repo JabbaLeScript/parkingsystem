@@ -22,6 +22,8 @@ public class FareCalculatorService {
         long duration = outHour - inHour;
 
         double durationHour = TimeUnit.MILLISECONDS.toHours(duration);
+        long durationMinute = TimeUnit.MILLISECONDS.toMinutes(duration);
+        double percentRate = (double) durationMinute / (double) 60;
 
         switch (ticket.getParkingSpot().getParkingType()){
             case CAR: {
@@ -29,14 +31,11 @@ public class FareCalculatorService {
                 ticket.setPrice(durationHour * Fare.CAR_RATE_PER_HOUR);
                 }
                 else {
-                    long durationMinute = TimeUnit.MILLISECONDS.toMinutes(duration);
-                    System.out.println(durationMinute);
                     if (durationMinute<30){
                         ticket.setPrice(0.0);
                     }
                     else {
-                    double rate = (double) durationMinute / (double) 60;
-                    ticket.setPrice(rate * Fare.CAR_RATE_PER_HOUR);
+                    ticket.setPrice(percentRate * Fare.CAR_RATE_PER_HOUR);
                     }
                 }
                 break;
@@ -46,9 +45,7 @@ public class FareCalculatorService {
                 ticket.setPrice(durationHour * Fare.BIKE_RATE_PER_HOUR);
                 }
                 else {
-                    long durationMinute = TimeUnit.MILLISECONDS.toMinutes(duration);
-                    double rate = (double) durationMinute / (double) 60;
-                    ticket.setPrice(rate * Fare.BIKE_RATE_PER_HOUR);
+                    ticket.setPrice(percentRate * Fare.BIKE_RATE_PER_HOUR);
                 }
                 break;
             }
