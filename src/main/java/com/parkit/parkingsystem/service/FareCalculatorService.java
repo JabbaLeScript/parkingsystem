@@ -18,11 +18,13 @@ public class FareCalculatorService {
         long outHour = ticket.getOutTime().getTime();
 
         //TODO: Some tests are failing here. Need to check if this logic is correct
-
         long duration = outHour - inHour;
 
+
         double durationHour = TimeUnit.MILLISECONDS.toHours(duration);
+
         long durationMinute = TimeUnit.MILLISECONDS.toMinutes(duration);
+
         double percentRate = (double) durationMinute / (double) 60;
 
         switch (ticket.getParkingSpot().getParkingType()){
