@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class FareCalculatorService {
 
-    private double formatter(long aDuration, Function<Long, Double> aTransformation){
+    private static double formatter(long aDuration, Function<Long, Double> aTransformation){
         return aTransformation.apply(aDuration);
     }
 
