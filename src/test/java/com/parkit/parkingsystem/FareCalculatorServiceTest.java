@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Date;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class FareCalculatorServiceTest {
