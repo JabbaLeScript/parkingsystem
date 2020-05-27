@@ -35,20 +35,20 @@ public class ParkingServiceTest {
     private void setUpPerTest() {
         try {
             when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-
             lenient().when(inputReaderUtil.readSelection()).thenReturn(1);
-
             ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
 
             Ticket ticket = new Ticket();
             ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
+
             lenient().when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
             lenient().when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
+            when(ticketDAO.saveTicket(any(Ticket.class))).thenReturn(true);
 
             when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
-                lenient().when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(13);
+            lenient().when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(13);
 
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
@@ -63,15 +63,24 @@ public class ParkingServiceTest {
     }
 
     @Test
-    public void processExitingVehicleTest(){
+    public void processExitingVehicle() throws Exception {
         parkingService.processExitingVehicle();
+        verify(ticketDAO, times(1)).updateTicket(any(Ticket.class));
         verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
+        verify(parkingSpotDAO, times(1)).updateParking(new ParkingSpot(1, ParkingType.CAR, false));
     }
 
     @Test
-    public void  processIncomingVehicleTest(){
+    public void processIncomingVehicle(){
         parkingService.processIncomingVehicle();
+        verify(parkingSpotDAO,times(1)).updateParking(any(ParkingSpot.class));
+        verify(ticketDAO, times(1)).saveTicket(any(Ticket.class));
         verify(parkingSpotDAO, times(1)).getNextAvailableSlot(any(ParkingType.class));
+    }
+
+    @Test()
+    public void failProcessInconmingVehicle(){
+
     }
 
 }
