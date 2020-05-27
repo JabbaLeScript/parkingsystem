@@ -35,7 +35,6 @@ public class ParkingServiceTest {
     private void setUpPerTest() {
         try {
             when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-
             lenient().when(inputReaderUtil.readSelection()).thenReturn(1);
 
             ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
@@ -48,7 +47,7 @@ public class ParkingServiceTest {
             lenient().when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
 
             when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
-                lenient().when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(13);
+            lenient().when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(13);
 
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
@@ -63,15 +62,15 @@ public class ParkingServiceTest {
     }
 
     @Test
-    public void processExitingVehicleTest(){
-        parkingService.processExitingVehicle();
-        verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
-    }
-
-    @Test
     public void  processIncomingVehicleTest(){
         parkingService.processIncomingVehicle();
         verify(parkingSpotDAO, times(1)).getNextAvailableSlot(any(ParkingType.class));
+    }
+
+    @Test
+    public void processExitingVehicleTest(){
+        parkingService.processExitingVehicle();
+        verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
     }
 
 }
