@@ -62,6 +62,7 @@ public class FareCalculatorServiceTest {
         Date inTime = new Date();
         inTime.setTime(spentTimeInParking);
         Date outTime = new Date();
+
         ParkingSpot parkingSpot = new ParkingSpot(1, parkingType,false);
 
         ticket.setInTime(inTime);
@@ -101,33 +102,23 @@ public class FareCalculatorServiceTest {
     // [STORY#2 : 5%-discount for recurring users](https://www.notion.so/STORY-2-5-discount-for-recurring-users-a75f51e971aa4679b0e0a40dd022c081)
     @Test
     public void calculateFareCarWithDiscountForRecuringUser(){
-
-        TicketDAO ticketDAO = mock(TicketDAO.class);
-
         //ARRANGE
         /*
         save a ticket into the DB
         * */
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  24 * 60 * 60 * 1000) );//24 hours parking time should give 24 * parking fare per hour
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+        ParkingSpot ps1 = new ParkingSpot(1, ParkingType.CAR, false);
+        ticket.setParkingSpot(ps1);
+        ticket.setVehicleRegNumber("1234");
+        ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
+        ticket.setOutTime(new Date());
+        ticket.setReccurent(true);
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        ticket.setVehicleRegNumber("abcd1");
-
-        //ACT
-        /*
-        * verify that the vehicule was already registered in the DB
-        * */
-
-        verify(ticketDAO.getTicket(ticket.getVehicleRegNumber()));
+        // ACT
+        fareCalculatorService.calculateFare(ticket);
 
         //ASSERT
-        double percentCar = 5 / 100 * Fare.CAR_RATE_PER_HOUR;
-        assertThat(ticket.getPrice()).isEqualTo(percentCar);
+        //double percentCar = 5 / 100 * Fare.CAR_RATE_PER_HOUR;
+        assertThat(ticket.getPrice()).isEqualTo(1.425);
     }
 
 }

@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.OngoingStubbing;
 
+import javax.xml.crypto.Data;
 import java.util.Date;
 
 import static org.mockito.Mockito.*;
@@ -94,9 +95,32 @@ public class ParkingServiceTest {
 
 
     @Test
-    void checkIfReccuringUser(){
+    void checkIfReccuringUser() throws Exception {
+        ParkingSpot parkingSpotA = new ParkingSpot(1, ParkingType.CAR, true);
+        ParkingSpot parkingSpotB = new ParkingSpot(1, ParkingType.CAR, true);
+
+        Ticket ticketA = new Ticket();
+        ticketA.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
+        ticketA.setVehicleRegNumber("1234");
+        ticketA.setParkingSpot(parkingSpotA);
+
+        Ticket ticketB = new Ticket();
+        ticketB.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
+        ticketB.setVehicleRegNumber("1234");
+        ticketB.setParkingSpot(parkingSpotB);
+
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("1234");
+        when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
+        when(ticketDAO.getTicket(ticketA.getVehicleRegNumber())).thenReturn(ticketA);
+        when(ticketDAO.getTicket(ticketB.getVehicleRegNumber())).thenReturn(ticketB);
+
+
         service.processIncomingVehicle();
-        verify(ticketDAO.getTicket("1234"));
+        verify(ticketDAO, times(1)).getTicket(ticketA.getVehicleRegNumber());
+        verify(ticketDAO, times(1)).getTicket(ticketB.getVehicleRegNumber());
+
+        assertThat(ticketA.getVehicleRegNumber()).isEqualTo(ticketB.getVehicleRegNumber());
     }
 
 }

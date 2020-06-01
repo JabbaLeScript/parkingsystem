@@ -33,6 +33,11 @@ public class FareCalculatorService {
             case CAR: {
                 if (durationHour>0){
                 ticket.setPrice(durationHour * Fare.CAR_RATE_PER_HOUR);
+                //Story2
+                if (ticket.isReccurent){
+                    ticket.setPrice(durationHour * 1.425 );
+                }
+
                 }
                 else {
                     if (durationMinute<30){

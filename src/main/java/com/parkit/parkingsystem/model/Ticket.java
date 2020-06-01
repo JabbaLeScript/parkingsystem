@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Ticket {
+    //Story2 'isReccurent' added
+    public boolean isReccurent;
     private int id;
     private ParkingSpot parkingSpot;
     private String vehicleRegNumber;
@@ -58,5 +60,13 @@ public class Ticket {
 
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
+    }
+
+    public boolean isReccurent() {
+        return isReccurent;
+    }
+
+    public void setReccurent(boolean reccurent) {
+        isReccurent = reccurent;
     }
 }
