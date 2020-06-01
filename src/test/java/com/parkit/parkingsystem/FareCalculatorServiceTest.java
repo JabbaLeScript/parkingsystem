@@ -3,25 +3,28 @@ package com.parkit.parkingsystem;
 import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
+import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
-
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class FareCalculatorServiceTest {
     private static FareCalculatorService fareCalculatorService;
     private Ticket ticket;
@@ -98,6 +101,9 @@ public class FareCalculatorServiceTest {
     // [STORY#2 : 5%-discount for recurring users](https://www.notion.so/STORY-2-5-discount-for-recurring-users-a75f51e971aa4679b0e0a40dd022c081)
     @Test
     public void calculateFareCarWithDiscountForRecuringUser(){
+
+        TicketDAO ticketDAO = mock(TicketDAO.class);
+
         //ARRANGE
         /*
         save a ticket into the DB
@@ -117,7 +123,7 @@ public class FareCalculatorServiceTest {
         * verify that the vehicule was already registered in the DB
         * */
 
-
+        verify(ticketDAO.getTicket(ticket.getVehicleRegNumber()));
 
         //ASSERT
         double percentCar = 5 / 100 * Fare.CAR_RATE_PER_HOUR;
