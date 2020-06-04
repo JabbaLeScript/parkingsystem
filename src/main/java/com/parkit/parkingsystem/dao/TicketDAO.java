@@ -86,4 +86,8 @@ public class TicketDAO {
         }
         return false;
     }
+    //Story 2
+    public boolean getReccuringUser(String vehicleRegNumber) {
+        return false;
+    }
 }

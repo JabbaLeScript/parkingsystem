@@ -93,7 +93,7 @@ public class ParkingServiceTest {
 
     }
 
-
+    //Story 2
     @Test
     void checkIfReccuringUser() throws Exception {
         ParkingSpot parkingSpotA = new ParkingSpot(1, ParkingType.CAR, true);
@@ -111,16 +111,14 @@ public class ParkingServiceTest {
 
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("1234");
+        // passer un objet à place de any
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
-        when(ticketDAO.getTicket(ticketA.getVehicleRegNumber())).thenReturn(ticketA);
-        when(ticketDAO.getTicket(ticketB.getVehicleRegNumber())).thenReturn(ticketB);
-
+        when(ticketDAO.getReccuringUser(ticketA.getVehicleRegNumber())).thenReturn(true);
 
         service.processIncomingVehicle();
-        verify(ticketDAO, times(1)).getTicket(ticketA.getVehicleRegNumber());
-        verify(ticketDAO, times(1)).getTicket(ticketB.getVehicleRegNumber());
 
-        assertThat(ticketA.getVehicleRegNumber()).isEqualTo(ticketB.getVehicleRegNumber());
+        verify(ticketDAO, times(1)).getReccuringUser(ticketA.getVehicleRegNumber());
+
     }
 
 }

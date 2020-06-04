@@ -35,8 +35,11 @@ public class ParkingService {
                 /*
                 *Story 2
                  * */
-                //return a ticket
-                ticketDAO.getTicket(vehicleRegNumber);
+                //return if the user is recurrent or not
+                boolean isRecurringUser = ticketDAO.getReccuringUser(vehicleRegNumber);
+                if (isRecurringUser){
+                    System.out.println("Welcome back ! As a recurring user of our parking lot, you will benefit from a 5% discount");
+                }
                 parkingSpot.setAvailable(false);
                 parkingSpotDAO.updateParking(parkingSpot);//allot this parking space and mark it's availability as false
 
@@ -49,6 +52,8 @@ public class ParkingService {
                 ticket.setPrice(0);
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
+                //Story 2
+                ticket.setReccurent(isRecurringUser);
                 ticketDAO.saveTicket(ticket);
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());

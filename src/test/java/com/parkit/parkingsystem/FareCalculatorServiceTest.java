@@ -43,14 +43,14 @@ public class FareCalculatorServiceTest {
         long oneHour = System.currentTimeMillis() - (60 * 60 * 1000);
         long lessThanOneHour= System.currentTimeMillis() - (45 * 60 * 1000);
         long lessThanThirtyMinutes = System.currentTimeMillis() - (20 * 60 * 1000);
-        long moreThanADay = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+        long moreThanADay = System.currentTimeMillis() - (48 * 60 * 60 * 1000);
         return Stream.of(
                 Arguments.of(ParkingType.CAR, Fare.CAR_RATE_PER_HOUR, oneHour, 1),
                 Arguments.of(ParkingType.BIKE, Fare.BIKE_RATE_PER_HOUR, oneHour, 1),
                 Arguments.of(ParkingType.BIKE, Fare.BIKE_RATE_PER_HOUR, lessThanOneHour, 0.75),
                 Arguments.of(ParkingType.CAR, Fare.CAR_RATE_PER_HOUR, lessThanOneHour, 0.75),
                 Arguments.of(ParkingType.CAR, Fare.CAR_RATE_PER_HOUR, lessThanThirtyMinutes , 0.00),
-                Arguments.of(ParkingType.CAR, Fare.CAR_RATE_PER_HOUR, moreThanADay , 24)
+                Arguments.of(ParkingType.CAR, Fare.CAR_RATE_PER_HOUR, moreThanADay , 48)
         );
     }
 

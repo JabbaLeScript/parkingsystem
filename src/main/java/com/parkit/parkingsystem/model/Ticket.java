@@ -6,6 +6,7 @@ import java.util.Date;
 public class Ticket {
     //Story2 'isReccurent' added
     public boolean isReccurent;
+    //
     private int id;
     private ParkingSpot parkingSpot;
     private String vehicleRegNumber;
