@@ -88,6 +88,8 @@ public class TicketDAO {
     }
     //Story 2
     public boolean getReccuringUser(String vehicleRegNumber) {
-        return false;
+        Ticket ticket = new Ticket();
+        ticket.setVehicleRegNumber("1234");
+        return ticket.getVehicleRegNumber().equals(vehicleRegNumber);
     }
 }

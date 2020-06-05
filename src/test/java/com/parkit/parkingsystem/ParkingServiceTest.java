@@ -95,7 +95,7 @@ public class ParkingServiceTest {
 
     //Story 2
     @Test
-    void checkIfReccuringUser() throws Exception {
+    void checkIfReccuringUserisInvoked() throws Exception {
         ParkingSpot parkingSpotA = new ParkingSpot(1, ParkingType.CAR, true);
         ParkingSpot parkingSpotB = new ParkingSpot(1, ParkingType.CAR, true);
 
