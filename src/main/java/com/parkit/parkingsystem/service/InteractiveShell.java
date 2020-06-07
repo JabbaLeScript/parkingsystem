@@ -10,16 +10,32 @@ public class InteractiveShell {
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
-    public static void loadInterface(){
+    private InputReaderUtil inputReaderUtil;
+    private ParkingSpotDAO parkingSpotDAO;
+    private TicketDAO ticketDAO;
+    private ParkingService parkingService;
+
+    public InteractiveShell() {
+    }
+
+    public InteractiveShell(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO, ParkingService parkingService) {
+        this.inputReaderUtil = inputReaderUtil;
+        this.parkingSpotDAO = parkingSpotDAO;
+        this.ticketDAO = ticketDAO;
+        this.parkingService = parkingService;
+    }
+
+    public void loadInterface(){
         logger.info("App initialized!!!");
         System.out.println("Welcome to Parking System!");
 
         boolean continueApp = true;
 
+/*
         InputReaderUtil inputReaderUtil = new InputReaderUtil();
         ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
         TicketDAO ticketDAO = new TicketDAO();
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);*/
 
         while(continueApp){
             loadMenu();
@@ -35,11 +51,11 @@ public class InteractiveShell {
                 }
                 case 3: {
                     System.out.println("Exiting from the system!");
-                    continueApp = false;
                     break;
                 }
                 default: System.out.println("Unsupported option. Please enter a number corresponding to the provided menu");
             }
+            continueApp = false;
         }
     }
 
