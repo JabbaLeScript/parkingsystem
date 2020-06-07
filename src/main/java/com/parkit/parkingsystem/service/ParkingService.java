@@ -15,8 +15,8 @@ public class ParkingService {
 
     private static final Logger logger = LogManager.getLogger("ParkingService");
 
-    private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-
+    //private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
+    private FareCalculatorService fareCalculatorService;
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private  TicketDAO ticketDAO;
@@ -26,16 +26,30 @@ public class ParkingService {
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
     }
+    /*
+    * explicit dependency of FareCalculatorService
+    * */
+    public ParkingService(FareCalculatorService fareCalculatorService, InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
+        this.fareCalculatorService = fareCalculatorService;
+        this.inputReaderUtil = inputReaderUtil;
+        this.parkingSpotDAO = parkingSpotDAO;
+        this.ticketDAO = ticketDAO;
+    }
 
-    public void processIncomingVehicle() {
+    /*
+    * ajout d'un parametre Parking Sport pour tester la classe
+    * */
+    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) {
         try{
-            ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
+            getNextParkingNumberIfAvailable(parkingSpot);
+
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
+
                 /*
                 *Story 2
+                * return if the user is recurrent or not
                  * */
-                //return if the user is recurrent or not
                 boolean isRecurringUser = ticketDAO.getReccuringUser(vehicleRegNumber);
                 if (isRecurringUser){
                     System.out.println("Welcome back ! As a recurring user of our parking lot, you will benefit from a 5% discount");
@@ -44,7 +58,7 @@ public class ParkingService {
                 parkingSpotDAO.updateParking(parkingSpot);//allot this parking space and mark it's availability as false
 
                 Date inTime = new Date();
-                Ticket ticket = new Ticket();
+                //Ticket ticket = new Ticket();
                 //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
                 //ticket.setId(ticketID);
                 ticket.setParkingSpot(parkingSpot);
@@ -69,14 +83,19 @@ public class ParkingService {
         return inputReaderUtil.readVehicleRegistrationNumber();
     }
 
-    public ParkingSpot getNextParkingNumberIfAvailable(){
-        int parkingNumber=0;
-        ParkingSpot parkingSpot = null;
+    /*
+    * - explicit dependencies added
+    * - set property of parkingSpot object throught setter and not directly in the constructor
+    * */
+    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot){
+        int parkingId=0;
         try{
             ParkingType parkingType = getVehichleType();
-            parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
-            if(parkingNumber > 0){
-                parkingSpot = new ParkingSpot(parkingNumber,parkingType, true);
+            parkingId = parkingSpotDAO.getNextAvailableSlot(parkingType);
+            if(parkingId > 0){
+                parkingSpot.setId(parkingId);
+                parkingSpot.setParkingType(parkingType);
+                parkingSpot.setAvailable(true);
             }else{
                 throw new Exception("Error fetching parking number from DB. Parking slots might be full");
             }
@@ -113,7 +132,9 @@ public class ParkingService {
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
+
             fareCalculatorService.calculateFare(ticket);
+
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);

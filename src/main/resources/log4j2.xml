@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.parkit.parkingsystem.service.ParkingService" level="debug">
+        <Logger name="App" level="debug">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="WARN">

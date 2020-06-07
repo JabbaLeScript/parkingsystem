@@ -2,6 +2,8 @@ package com.parkit.parkingsystem.service;
 
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.model.ParkingSpot;
+import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +20,10 @@ public class InteractiveShell {
     public InteractiveShell() {
     }
 
+    /*
+    * refactor the code to remove all static and introduce a constructor that sets the dependencies
+    * it's in order to reduce dependency between my objects and my class
+     * */
     public InteractiveShell(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO, ParkingService parkingService) {
         this.inputReaderUtil = inputReaderUtil;
         this.parkingSpotDAO = parkingSpotDAO;
@@ -25,24 +31,26 @@ public class InteractiveShell {
         this.parkingService = parkingService;
     }
 
+
+    /*
+    * this method was previously static ...
+    *
+    * */
     public void loadInterface(){
         logger.info("App initialized!!!");
         System.out.println("Welcome to Parking System!");
 
-        boolean continueApp = true;
+        ParkingSpot parkingSpot = new ParkingSpot();
+        Ticket ticket = new Ticket();
 
-/*
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
-        ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
-        TicketDAO ticketDAO = new TicketDAO();
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);*/
+        boolean continueApp = true;
 
         while(continueApp){
             loadMenu();
             int option = inputReaderUtil.readSelection();
             switch(option){
                 case 1: {
-                    parkingService.processIncomingVehicle();
+                    parkingService.processIncomingVehicle(parkingSpot, ticket);
                     break;
                 }
                 case 2: {

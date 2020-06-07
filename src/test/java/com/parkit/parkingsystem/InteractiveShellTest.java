@@ -2,6 +2,8 @@ package com.parkit.parkingsystem;
 
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.model.ParkingSpot;
+import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.InteractiveShell;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
@@ -49,9 +51,10 @@ public class InteractiveShellTest {
 
     @Test
     void allowNewVehicletoEnterandAllocateParkingSpace(){
+
         when(inputReaderUtil.readSelection()).thenReturn(1);
         interactiveShell.loadInterface();
-        verify(parkingService).processIncomingVehicle();
+        verify(parkingService).processIncomingVehicle(new ParkingSpot(), new Ticket());
     }
 
     @Test
@@ -63,7 +66,6 @@ public class InteractiveShellTest {
 
     @Test
     void exitingFromTheSystem(){
-
         //arrange
        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
        System.setErr(new PrintStream(errContent));
