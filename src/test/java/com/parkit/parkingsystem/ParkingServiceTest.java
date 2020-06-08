@@ -11,6 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
@@ -46,11 +50,12 @@ public class ParkingServiceTest {
     /*
     * parkingsport is not null and his id is > 0
     * */
+
     @ParameterizedTest(name ="test incoming vehicule")
     @ValueSource(ints = {1, 2})
     public void testProcessIncomingVehicleDisplayParkingSpotID(int input){
 
-        ParkingSpot parkingSpot = new ParkingSpot(3, ParkingType.CAR, true);
+        ParkingSpot parkingSpot = new ParkingSpot();
         Ticket ticket = new Ticket();
 
         when(inputReaderUtil.readSelection()).thenReturn(input);
@@ -68,23 +73,6 @@ public class ParkingServiceTest {
         verify(ticketDAO,times(1)).saveTicket(any(Ticket.class));
 
         assertThat(parkingSpot.getId()).isEqualTo(3);
-
-    }
-
-    /*
-    * throws exception if parking spot is null or parking sport id >=0
-    * */
-    @Test
-    void testNextParkingNumberIsNotAvailbleCauseParkingSpotis0OrNull(){
-        //when
-        ParkingSpot parkingSpot = new ParkingSpot();
-        when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(0);
-
-        // then
-        //service.getNextParkingNumberIfAvailable(parkingSpot);
-        assertThrows(Exception.class, () -> service.getNextParkingNumberIfAvailable(parkingSpot));
-        verify(parkingSpotDAO, times(1)).getNextAvailableSlot(any(ParkingType.class));
 
     }
 
@@ -113,6 +101,67 @@ public class ParkingServiceTest {
         assertThat(ticket.getVehicleRegNumber()).isEqualTo("1234");
         assertThat(ticket.getInTime()).isEqualTo(ticket.getInTime());
     }
+
+    @Test
+    void testUnableToProcessIncomingVehicle(){
+
+    }
+
+
+    /*
+    * Assert that the instance variable of parkingspot object are correctly setted
+    * */
+
+    private static Stream<Arguments> paramValueNextParkingNumberIsAvailable(){
+        return Stream.of(
+                Arguments.of(1, ParkingType.CAR),
+                Arguments.of(2, ParkingType.BIKE)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource({"paramValueNextParkingNumberIsAvailable"})
+    void testTheNextParkingNumberisAvailable(int input, ParkingType parkingType){
+
+        ParkingSpot parkingSpot = new ParkingSpot();
+        when(inputReaderUtil.readSelection()).thenReturn(input);
+        when(parkingSpotDAO.getNextAvailableSlot(parkingType)).thenReturn(100);
+
+
+        service.getNextParkingNumberIfAvailable(parkingSpot);
+        verify(inputReaderUtil).readSelection();
+        verify(parkingSpotDAO).getNextAvailableSlot(parkingType);
+
+        //assert
+        assertThat(parkingSpot.getId()).isEqualTo(100);
+        assertThat(parkingSpot.getParkingType()).isEqualTo(parkingType);
+        assertThat(parkingSpot.isAvailable()).isEqualTo(true);
+    }
+
+    /*
+    * assert parking
+    * */
+
+    /*
+    * throws exception if parking spot is null or parking sport id >=0
+    * */
+    @Test
+    void testNextParkingNumberIsNotAvailbleCauseParkingSpotis0OrNull(){
+        //when
+        ParkingSpot parkingSpot = new ParkingSpot();
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(0);
+
+        // then
+        service.getNextParkingNumberIfAvailable(parkingSpot);
+        verify(inputReaderUtil).readSelection();
+        verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
+
+        assertThrows(Exception.class, () -> service.getNextParkingNumberIfAvailable(parkingSpot));
+
+    }
+
+
 
 
 
