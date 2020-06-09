@@ -54,7 +54,7 @@ public class InteractiveShell {
                     break;
                 }
                 case 2: {
-                    parkingService.processExitingVehicle();
+                    parkingService.processExitingVehicle(ticket, new FareCalculatorService());
                     break;
                 }
                 case 3: {

@@ -4,6 +4,7 @@ import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
+import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.InteractiveShell;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
@@ -41,11 +42,7 @@ public class InteractiveShellTest {
 
     @BeforeEach
     void setUp() {
-        /*
-        when(inputReaderUtil.readSelection()).thenReturn(1);
-        interactiveShell = new InteractiveShell();*/
         MockitoAnnotations.initMocks(this);
-
     }
 
 
@@ -59,9 +56,10 @@ public class InteractiveShellTest {
 
     @Test
     void allowVehicleExiting(){
+
         when(inputReaderUtil.readSelection()).thenReturn(2);
         interactiveShell.loadInterface();
-        verify(parkingService).processExitingVehicle();
+        verify(parkingService).processExitingVehicle(new Ticket(), new FareCalculatorService());
     }
 
     @Test
@@ -69,8 +67,8 @@ public class InteractiveShellTest {
         //arrange
        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
        System.setErr(new PrintStream(errContent));
+       System.err.print("Exiting from the system!");
 
-        System.err.print("Exiting from the system!");
         when(inputReaderUtil.readSelection()).thenReturn(3);
 
         interactiveShell.loadInterface();

@@ -16,7 +16,7 @@ public class ParkingService {
     private static final Logger logger = LogManager.getLogger("ParkingService");
 
     //private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-    private FareCalculatorService fareCalculatorService;
+    //private FareCalculatorService fareCalculatorService;
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private  TicketDAO ticketDAO;
@@ -29,15 +29,15 @@ public class ParkingService {
     /*
     * explicit dependency of FareCalculatorService
     * */
-    public ParkingService(FareCalculatorService fareCalculatorService, InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
+    /*public ParkingService(FareCalculatorService fareCalculatorService, InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
         this.fareCalculatorService = fareCalculatorService;
         this.inputReaderUtil = inputReaderUtil;
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
-    }
+    }*/
 
     /*
-    * ajout d'un parametre Parking Sport pour tester la classe
+    * ajout des parametres ParkingSpot et ticket pour tester la classe
     * */
     public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) {
         try{
@@ -45,7 +45,6 @@ public class ParkingService {
 
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
-
                 /*
                 *Story 2
                 * return if the user is recurrent or not
@@ -87,7 +86,7 @@ public class ParkingService {
     * - explicit dependencies added
     * - set property of parkingSpot object throught setter and not directly in the constructor
     * */
-    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot){
+    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot) throws Exception {
         int parkingId=0;
         try{
             ParkingType parkingType = getVehichleType();
@@ -99,10 +98,11 @@ public class ParkingService {
             }else{
                 throw new Exception("Error fetching parking number from DB. Parking slots might be full");
             }
-        }catch(IllegalArgumentException ie){
+        } catch(IllegalArgumentException ie){
             logger.error("Error parsing user input for type of vehicle", ie);
         }catch(Exception e){
             logger.error("Error fetching next available parking slot", e);
+            //throw new Exception("Error fetching next available parking slot");
         }
         return parkingSpot;
     }
@@ -126,10 +126,13 @@ public class ParkingService {
         }
     }
 
-    public void processExitingVehicle() {
+    /*
+     * ajout des parametres ticket et FareCalculatorService pour tester la classe
+     * */
+    public void processExitingVehicle(Ticket ticket, FareCalculatorService fareCalculatorService) {
         try{
             String vehicleRegNumber = getVehichleRegNumber();
-            Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
+            ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
 
@@ -138,6 +141,7 @@ public class ParkingService {
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
+                //here the method return a boolean but nothing is checked
                 parkingSpotDAO.updateParking(parkingSpot);
                 System.out.println("Please pay the parking fare:" + ticket.getPrice());
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
