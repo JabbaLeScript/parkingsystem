@@ -8,6 +8,11 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import com.parkit.parkingsystem.util.test.TestAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,10 +24,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
@@ -33,12 +38,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
+
     @Mock
     private static InputReaderUtil inputReaderUtil;
     @Mock
     private static ParkingSpotDAO parkingSpotDAO;
     @Mock
     private static TicketDAO ticketDAO;
+
+    /*@Mock
+    private static Logger logger;*/
 
     @InjectMocks
     private ParkingService service;
@@ -217,8 +226,37 @@ public class ParkingServiceTest {
     }
 
     @Test
-    void testUnableToProcessExitingVehicle(){
+    void testUnableToProcessExitingVehicle() throws Exception {
         //throws Exception
+        TestAppender appender = new TestAppender();
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.addAppender(appender);
+
+        FareCalculatorService calculator = new FareCalculatorService();
+        ParkingSpot parkingSpot = new ParkingSpot(12, ParkingType.CAR, false);
+        Ticket ticket = new Ticket();
+        ticket.setInTime(new Date(System.currentTimeMillis() - (  60 * 60 * 1000)));
+        ticket.setVehicleRegNumber("1234");
+        ticket.setParkingSpot(parkingSpot);
+
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("12");
+
+        service.processExitingVehicle(ticket, calculator);
+
+        Optional<LogEvent> aLogEvent = appender.getLogEvents().stream()
+                .filter(logEvent -> logEvent.getLevel().equals(Level.ERROR))
+                .findFirst();
+
+        if (aLogEvent.isPresent()){
+        assertTrue(appender.getLogEvents().size()==1);
+        //assert the log level
+        assertThat(aLogEvent.get().getMessage()).isEqualTo(Level.ERROR);
+        //assert exception
+        }
+        else {
+            System.out.println("no error event");
+        }
+
     }
 
     /*

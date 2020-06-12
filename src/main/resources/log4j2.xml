@@ -6,10 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="App" level="debug">
+        <Logger name="ParkingService" level="debug">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Root level="WARN">
+        <Root level="ERROR">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
