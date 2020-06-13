@@ -8,11 +8,14 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import com.parkit.parkingsystem.util.test.MockedAppender;
 import com.parkit.parkingsystem.util.test.TestAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
+    //private static MockedAppender mockedAppender;
+   // private static Logger logger;
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
@@ -45,22 +50,31 @@ public class ParkingServiceTest {
     private static ParkingSpotDAO parkingSpotDAO;
     @Mock
     private static TicketDAO ticketDAO;
-
-    /*@Mock
-    private static Logger logger;*/
+    @Mock
+    private static Logger logger;
 
     @InjectMocks
     private ParkingService service;
 
+    @BeforeAll
+    static void beforeAll() {
+    }
+
     @BeforeEach
     private void setUpPerTest(){
         MockitoAnnotations.initMocks(this);
+        logger = (Logger) LogManager.getLogger("ParkingService");
+
+    }
+
+    @AfterEach
+    void tearDown() {
+        //logger.removeAppender(mockedAppender);
     }
 
     /*
     * parkingsport is not null and his id is > 0
     * */
-
     @ParameterizedTest(name ="test incoming vehicule")
     @ValueSource(ints = {1, 2})
     public void testProcessIncomingVehicleDisplayParkingSpotID(int input){
@@ -225,37 +239,54 @@ public class ParkingServiceTest {
         assertThat("Unable to update ticket information. Error occurred").isEqualTo(errContent.toString());
     }
 
-    @Test
+    @Test()
     void testUnableToProcessExitingVehicle() throws Exception {
         //throws Exception
+/*
         TestAppender appender = new TestAppender();
-        final Logger logger = (Logger) LogManager.getRootLogger();
-        logger.addAppender(appender);
+        final Logger logger = (Logger) LogManager.getLogger(ParkingService.class);
+        logger.addAppender(appender);*/
 
         FareCalculatorService calculator = new FareCalculatorService();
         ParkingSpot parkingSpot = new ParkingSpot(12, ParkingType.CAR, false);
         Ticket ticket = new Ticket();
         ticket.setInTime(new Date(System.currentTimeMillis() - (  60 * 60 * 1000)));
-        ticket.setVehicleRegNumber("1234");
+        ticket.setVehicleRegNumber("azada");
         ticket.setParkingSpot(parkingSpot);
 
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("12");
 
         service.processExitingVehicle(ticket, calculator);
 
-        Optional<LogEvent> aLogEvent = appender.getLogEvents().stream()
-                .filter(logEvent -> logEvent.getLevel().equals(Level.ERROR))
-                .findFirst();
+        verify(logger).error("Unable to process exiting vehicle", Exception::new);
+        //verify(logger.)
 
-        if (aLogEvent.isPresent()){
-        assertTrue(appender.getLogEvents().size()==1);
-        //assert the log level
-        assertThat(aLogEvent.get().getMessage()).isEqualTo(Level.ERROR);
-        //assert exception
-        }
-        else {
-            System.out.println("no error event");
-        }
+
+        //assertThat(logger.getLevel()).isEqualTo(Level.ERROR);
+
+
+/*
+        assertTrue(mockedAppender.logs.size()==1);
+        assertThat(mockedAppender.logs.get(0).getLevel()).isEqualTo(Level.ERROR);*/
+        //assertThat(aLogEvent.get().getMessage()).isEqualTo(Level.ERROR);
+
+        //assertTrue(appender.getLogEvents().size()==1);
+
+        /*if (!appender.getLogEvents().isEmpty()){
+
+            LogEvent testLog = appender.getLogEvents().get(0);
+            Level level = testLog.getLevel();
+
+            Optional<LogEvent> aLogEvent = appender.getLogEvents().stream()
+                    .filter(logEvent -> logEvent.getLevel().equals(Level.ERROR))
+                    .findFirst();
+
+            if (aLogEvent.isPresent()){
+                //assert the log level
+                //assert exception
+            }
+    }*/
+
 
     }
 

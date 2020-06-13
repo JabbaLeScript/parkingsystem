@@ -13,8 +13,6 @@ import java.util.List;
 public class TestAppender implements Appender {
 
     private List<LogEvent> logEvents = new ArrayList<>();
-    private List<LogEvent> offLogEvents = new ArrayList<>();
-
 
     public List<LogEvent> getLogEvents() {
         return logEvents;
@@ -22,6 +20,7 @@ public class TestAppender implements Appender {
 
     @Override
     public void append(LogEvent event){
+        System.out.println(event.getLevel());
         logEvents.add(event);
     }
 

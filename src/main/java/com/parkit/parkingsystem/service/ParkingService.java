@@ -15,15 +15,27 @@ import java.util.Date;
 
 public class ParkingService {
 
-    private static final Logger logger = LogManager.getLogger("ParkingService");
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private  TicketDAO ticketDAO;
+    //private static final Logger logger = LogManager.getLogger("ParkingService");
+    /*
+    * pour tester le logger, fait une injection
+    * */
+    private Logger logger = LogManager.getLogger("ParkingService");
+    //private Logger logger;
 
     public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO){
         this.inputReaderUtil = inputReaderUtil;
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
+    }
+
+    public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO, Logger logger) {
+        this.inputReaderUtil = inputReaderUtil;
+        this.parkingSpotDAO = parkingSpotDAO;
+        this.ticketDAO = ticketDAO;
+        this.logger = logger;
     }
 
     /*
