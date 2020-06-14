@@ -6,14 +6,17 @@ import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import com.parkit.parkingsystem.util.StringAsker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
+import java.util.Scanner;
 
 public class ParkingService {
 
-    private static final Logger logger = LogManager.getLogger("ParkingService");
+    //private static final Logger logger = LogManager.getLogger("ParkingService");
+    private Logger logger = LogManager.getLogger("ParkingService");
 
     //private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
     //private FareCalculatorService fareCalculatorService;
@@ -26,25 +29,25 @@ public class ParkingService {
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
     }
-    /*
-    * explicit dependency of FareCalculatorService
-    * */
-    /*public ParkingService(FareCalculatorService fareCalculatorService, InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
-        this.fareCalculatorService = fareCalculatorService;
+
+    //to handle logger during test
+    public ParkingService(Logger logger, InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
+        this.logger = logger;
         this.inputReaderUtil = inputReaderUtil;
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
-    }*/
+    }
+
 
     /*
     * ajout des parametres ParkingSpot et ticket pour tester la classe
     * */
-    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) {
+    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) throws Exception{
         try{
             getNextParkingNumberIfAvailable(parkingSpot);
-
             if(parkingSpot !=null && parkingSpot.getId() > 0){
-                String vehicleRegNumber = getVehichleRegNumber();
+                 String vehicleRegNumber = getVehichleRegNumber();
+                 System.out.println(vehicleRegNumber);
                 /*
                 *Story 2
                 * return if the user is recurrent or not
@@ -73,13 +76,16 @@ public class ParkingService {
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
             }
         }catch(Exception e){
+            e.getMessage();
             logger.error("Unable to process incoming vehicle",e);
+            throw  e;
         }
     }
 
     private String getVehichleRegNumber() throws Exception {
-        System.out.println("Please type the vehicle registration number and press enter key");
-        return inputReaderUtil.readVehicleRegistrationNumber();
+        //System.out.println("Please type the vehicle registration number and press enter key");
+        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out));
+        return vehicleRegNumber;
     }
 
     /*
@@ -95,14 +101,12 @@ public class ParkingService {
                 parkingSpot.setId(parkingId);
                 parkingSpot.setParkingType(parkingType);
                 parkingSpot.setAvailable(true);
-            }else{
-                throw new Exception("Error fetching parking number from DB. Parking slots might be full");
-            }
+            }else throw new Exception("Error fetching parking number from DB. Parking slots might be full");
         } catch(IllegalArgumentException ie){
             logger.error("Error parsing user input for type of vehicle", ie);
-        }catch(Exception e){
+        }
+        catch(Exception e){
             logger.error("Error fetching next available parking slot", e);
-            //throw new Exception("Error fetching next available parking slot");
         }
         return parkingSpot;
     }

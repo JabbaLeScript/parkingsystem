@@ -47,7 +47,7 @@ public class InteractiveShellTest {
 
 
     @Test
-    void allowNewVehicletoEnterandAllocateParkingSpace(){
+    void allowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
 
         when(inputReaderUtil.readSelection()).thenReturn(1);
         interactiveShell.loadInterface();
@@ -55,7 +55,7 @@ public class InteractiveShellTest {
     }
 
     @Test
-    void allowVehicleExiting(){
+    void allowVehicleExiting() throws Exception {
 
         when(inputReaderUtil.readSelection()).thenReturn(2);
         interactiveShell.loadInterface();
@@ -63,7 +63,7 @@ public class InteractiveShellTest {
     }
 
     @Test
-    void exitingFromTheSystem(){
+    void exitingFromTheSystem() throws Exception {
         //arrange
        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
        System.setErr(new PrintStream(errContent));
@@ -76,7 +76,7 @@ public class InteractiveShellTest {
     }
 
     @Test
-    void unsuppotedOptionMessage(){
+    void unsupportedOptionMessage() throws Exception {
         //Arrange
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
