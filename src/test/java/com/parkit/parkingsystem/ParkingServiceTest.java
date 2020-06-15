@@ -8,8 +8,7 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import com.parkit.parkingsystem.util.StringAsker;
-import org.apache.logging.log4j.Level;
+import com.parkit.parkingsystem.util.Asker;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,21 +20,22 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.api.mockito.PowerMockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ParkingServiceTest {
 
     @Mock
@@ -66,6 +66,7 @@ public class ParkingServiceTest {
 
         ParkingSpot parkingSpot = new ParkingSpot();
         Ticket ticket = new Ticket();
+        Asker asker = new Asker(System.in, System.out);
 
         when(inputReaderUtil.readSelection()).thenReturn(input);
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
@@ -76,7 +77,7 @@ public class ParkingServiceTest {
         * next available vehicule Verification
         *
         * */
-        service.processIncomingVehicle(parkingSpot,ticket);
+        service.processIncomingVehicle(parkingSpot,ticket,asker);
         verify(parkingSpotDAO, times(1)).getNextAvailableSlot(any(ParkingType.class));
         verify(parkingSpotDAO, times(1)).updateParking(parkingSpot);
         verify(ticketDAO,times(1)).saveTicket(any(Ticket.class));
@@ -92,16 +93,16 @@ public class ParkingServiceTest {
         ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
         ticket.setVehicleRegNumber("1234");
         ticket.setOutTime(new Date());
-
+        Asker asker = new Asker(System.in, System.out);
 
         when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out))).thenReturn("1234");
+        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("1234");
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
         when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(false);
         //when(parkingSpotDAO.updateParking(parkingSpot)).thenReturn(false);
         when(ticketDAO.saveTicket(ticket)).thenReturn(true);
 
-        service.processIncomingVehicle(new ParkingSpot(),ticket);
+        service.processIncomingVehicle(new ParkingSpot(),ticket, asker);
 
         verify(parkingSpotDAO, times(1)).getNextAvailableSlot(any(ParkingType.class));
         verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
@@ -176,6 +177,7 @@ public class ParkingServiceTest {
     @Test
     void testTicketInformationAreUpdatedAtExiting() throws Exception {
 
+        Asker asker = new Asker(System.in, System.out);
         FareCalculatorService calculator = new FareCalculatorService();
         ParkingSpot parkingSpot = new ParkingSpot(12, ParkingType.CAR, false);
         Ticket ticket = new Ticket();
@@ -183,12 +185,12 @@ public class ParkingServiceTest {
         ticket.setVehicleRegNumber("1234");
         ticket.setParkingSpot(parkingSpot);
 
-        when(inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out))).thenReturn("1234");
+        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("1234");
         when(ticketDAO.getTicket("1234")).thenReturn(ticket);
         when(ticketDAO.updateTicket(ticket)).thenReturn(true);
         when(parkingSpotDAO.updateParking(parkingSpot)).thenReturn(true);
 
-        service.processExitingVehicle(ticket, calculator);
+        service.processExitingVehicle(ticket, calculator, asker);
         //assert
         assertThat(ticket.getPrice()).isEqualTo(1.5);
         assertThat(ticket.getVehicleRegNumber()).isEqualTo("1234");
@@ -203,6 +205,9 @@ public class ParkingServiceTest {
         System.setErr(new PrintStream(errContent));
         System.err.print("Unable to update ticket information. Error occurred");
 
+        Asker asker = new Asker(System.in, System.out);
+
+
         FareCalculatorService calculator = new FareCalculatorService();
         ParkingSpot parkingSpot = new ParkingSpot(12, ParkingType.CAR, false);
         Ticket ticket = new Ticket();
@@ -210,11 +215,11 @@ public class ParkingServiceTest {
         ticket.setVehicleRegNumber("1234");
         ticket.setParkingSpot(parkingSpot);
 
-        when(inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out))).thenReturn("1234");
+        when(inputReaderUtil.readVehicleRegistrationNumber(new Asker(System.in, System.out))).thenReturn("1234");
         when(ticketDAO.getTicket("1234")).thenReturn(ticket);
         when(ticketDAO.updateTicket(ticket)).thenReturn(false);
 
-        service.processExitingVehicle(ticket, calculator);
+        service.processExitingVehicle(ticket, calculator, asker);
         //assert
         assertThat("Unable to update ticket information. Error occurred").isEqualTo(errContent.toString());
     }
@@ -229,19 +234,21 @@ public class ParkingServiceTest {
         Ticket ticket = new Ticket();
         ticket.setInTime(new Date(System.currentTimeMillis() - (  60 * 60 * 1000)));
         ticket.setParkingSpot(parkingSpot);
+        Asker asker = new Asker(System.in, System.out);
+
 
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(2);
-        when(inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out))).thenReturn("");
+        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("");
 
         try {
-            service.processIncomingVehicle(parkingSpot,ticket);
+            service.processIncomingVehicle(parkingSpot,ticket, asker);
 
         }catch (Exception e){
             assertThat(e).isInstanceOf(Exception.class);
         }
        verify(inputReaderUtil,times(1)).readSelection();
-       verify(inputReaderUtil, times(1)).readVehicleRegistrationNumber(new StringAsker(System.in, System.out));
+       verify(inputReaderUtil, times(1)).readVehicleRegistrationNumber(asker);
 
     }
     /*
@@ -266,18 +273,21 @@ public class ParkingServiceTest {
         ticketA.setVehicleRegNumber("1234");
         ticketA.setParkingSpot(parkingSpotA);
 
+        Asker asker = new Asker(System.in, System.out);
+
+
         Ticket ticketB = new Ticket();
         ticketB.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
         ticketB.setVehicleRegNumber("1234");
         ticketB.setParkingSpot(parkingSpotB);
 
         when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out))).thenReturn("1234");
+        when(inputReaderUtil.readVehicleRegistrationNumber(new Asker(System.in, System.out))).thenReturn("1234");
         // passer un objet à place de any
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
         when(ticketDAO.getReccuringUser(ticketA.getVehicleRegNumber())).thenReturn(true);
 
-        service.processIncomingVehicle(parkingSpotA, ticketA);
+        service.processIncomingVehicle(parkingSpotA, ticketA, asker);
 
         //
         verify(ticketDAO, times(1)).getReccuringUser(ticketA.getVehicleRegNumber());

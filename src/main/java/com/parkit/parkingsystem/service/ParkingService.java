@@ -6,16 +6,16 @@ import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import com.parkit.parkingsystem.util.StringAsker;
+import com.parkit.parkingsystem.util.Asker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Date;
-import java.util.Scanner;
 
 public class ParkingService {
 
-    //private static final Logger logger = LogManager.getLogger("ParkingService");
     private Logger logger = LogManager.getLogger("ParkingService");
 
     //private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
@@ -42,11 +42,11 @@ public class ParkingService {
     /*
     * ajout des parametres ParkingSpot et ticket pour tester la classe
     * */
-    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) throws Exception{
+    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket, Asker asker) throws Exception{
         try{
             getNextParkingNumberIfAvailable(parkingSpot);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
-                 String vehicleRegNumber = getVehichleRegNumber();
+                 String vehicleRegNumber = getVehichleRegNumber(asker);
                  System.out.println(vehicleRegNumber);
                 /*
                 *Story 2
@@ -82,9 +82,9 @@ public class ParkingService {
         }
     }
 
-    private String getVehichleRegNumber() throws Exception {
+    private String getVehichleRegNumber(Asker asker) throws Exception {
         //System.out.println("Please type the vehicle registration number and press enter key");
-        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(new StringAsker(System.in, System.out));
+        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(asker);
         return vehicleRegNumber;
     }
 
@@ -133,9 +133,9 @@ public class ParkingService {
     /*
      * ajout des parametres ticket et FareCalculatorService pour tester la classe
      * */
-    public void processExitingVehicle(Ticket ticket, FareCalculatorService fareCalculatorService) {
+    public void processExitingVehicle(Ticket ticket, FareCalculatorService fareCalculatorService, Asker asker) {
         try{
-            String vehicleRegNumber = getVehichleRegNumber();
+            String vehicleRegNumber = getVehichleRegNumber(asker);
             ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);

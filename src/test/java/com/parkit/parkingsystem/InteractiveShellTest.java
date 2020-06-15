@@ -7,6 +7,7 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.InteractiveShell;
 import com.parkit.parkingsystem.service.ParkingService;
+import com.parkit.parkingsystem.util.Asker;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,17 +50,20 @@ public class InteractiveShellTest {
     @Test
     void allowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
 
+        Asker asker = new Asker(System.in, System.out);
+
         when(inputReaderUtil.readSelection()).thenReturn(1);
         interactiveShell.loadInterface();
-        verify(parkingService).processIncomingVehicle(new ParkingSpot(), new Ticket());
+        verify(parkingService).processIncomingVehicle(new ParkingSpot(), new Ticket(), asker);
     }
 
     @Test
     void allowVehicleExiting() throws Exception {
 
+        Asker asker = new Asker(System.in, System.out);
         when(inputReaderUtil.readSelection()).thenReturn(2);
         interactiveShell.loadInterface();
-        verify(parkingService).processExitingVehicle(new Ticket(), new FareCalculatorService());
+        verify(parkingService).processExitingVehicle(new Ticket(), new FareCalculatorService(), asker);
     }
 
     @Test

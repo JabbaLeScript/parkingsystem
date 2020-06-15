@@ -4,6 +4,7 @@ import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
+import com.parkit.parkingsystem.util.Asker;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,7 @@ public class InteractiveShell {
 
         ParkingSpot parkingSpot = new ParkingSpot();
         Ticket ticket = new Ticket();
+        Asker asker = new Asker(System.in, System.out);
 
         boolean continueApp = true;
 
@@ -50,11 +52,11 @@ public class InteractiveShell {
             int option = inputReaderUtil.readSelection();
             switch(option){
                 case 1: {
-                    parkingService.processIncomingVehicle(parkingSpot, ticket);
+                    parkingService.processIncomingVehicle(parkingSpot, ticket,asker);
                     break;
                 }
                 case 2: {
-                    parkingService.processExitingVehicle(ticket, new FareCalculatorService());
+                    parkingService.processExitingVehicle(ticket, new FareCalculatorService(), asker);
                     break;
                 }
                 case 3: {
