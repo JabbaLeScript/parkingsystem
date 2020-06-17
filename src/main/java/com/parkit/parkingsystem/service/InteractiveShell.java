@@ -12,11 +12,19 @@ import org.apache.logging.log4j.Logger;
 public class InteractiveShell {
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
+    /**
+    * this constante replace the original method designed to ask for user input
+    * */
+    public static final String CONS_SELECT_OPTION_TO_LOAD_MENU = "Please select an option. Simply enter the number to choose an action" + System.lineSeparator()
+            + "1 New Vehicle Entering - Allocate Parking Space" + System.lineSeparator()
+            + "2 Vehicle Exiting - Generate Ticket Price" + System.lineSeparator()
+            + "3 Shutdown System";
 
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
     private ParkingService parkingService;
+    private Asker asker = new Asker(System.in, System.out);
 
     public InteractiveShell() {
     }
@@ -38,21 +46,21 @@ public class InteractiveShell {
     *
     * */
     public void loadInterface() throws Exception {
+
         logger.info("App initialized!!!");
         System.out.println("Welcome to Parking System!");
 
         ParkingSpot parkingSpot = new ParkingSpot();
         Ticket ticket = new Ticket();
-        Asker asker = new Asker(System.in, System.out);
+        //Asker asker = new Asker(System.in, System.out);
 
         boolean continueApp = true;
 
         while(continueApp){
-            loadMenu();
-            int option = inputReaderUtil.readSelection();
+            int option = inputReaderUtil.readSelection(asker, CONS_SELECT_OPTION_TO_LOAD_MENU);
             switch(option){
                 case 1: {
-                    parkingService.processIncomingVehicle(parkingSpot, ticket,asker);
+                    parkingService.processIncomingVehicle(parkingSpot, ticket, new Asker(System.in, System.out));
                     break;
                 }
                 case 2: {
@@ -68,12 +76,4 @@ public class InteractiveShell {
             continueApp = false;
         }
     }
-
-    private static void loadMenu(){
-        System.out.println("Please select an option. Simply enter the number to choose an action");
-        System.out.println("1 New Vehicle Entering - Allocate Parking Space");
-        System.out.println("2 Vehicle Exiting - Generate Ticket Price");
-        System.out.println("3 Shutdown System");
-    }
-
 }

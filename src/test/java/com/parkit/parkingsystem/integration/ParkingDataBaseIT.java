@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +43,9 @@ public class ParkingDataBaseIT {
 
     @BeforeEach
     private void setUpPerTest() throws Exception {
-        when(inputReaderUtil.readSelection()).thenReturn(1);
+        Asker asker = new Asker(System.in, System.out);
+
+        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber(new Asker(System.in, System.out))).thenReturn("ABCDEF");
         dataBasePrepareService.clearDataBaseEntries();
     }

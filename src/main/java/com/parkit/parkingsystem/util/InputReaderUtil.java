@@ -8,42 +8,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InputReaderUtil {
-
-    private static Scanner scan = new Scanner(System.in);
     private static final Logger logger = LogManager.getLogger("InputReaderUtil");
 
-    public int readSelection() {
+    /*
+     * refactoring method : injecting asker wrapper to ask user input
+     * */
+    public int readSelection(Asker asker, String message) {
         try {
-            int input = Integer.parseInt(scan.nextLine());
-            return input;
-        }catch(Exception e){
-            logger.error("Error while reading user input from Shell", e);
-            System.out.println("Error reading input. Please enter valid number for proceeding further");
-            return -1;
-        }
-    }
-
-    public int readSelection(Asker asker) {
-        try {
-            String separator = System.lineSeparator();
-            String messages = "Please select vehicle type from menu" + separator
-                    + "1 CAR" + separator
-                    + "2 BIKE";
-            int input = asker.askInt(messages);
-            return input;
-        }catch(Exception e){
-            logger.error("Error while reading user input from Shell", e);
-            System.out.println("Error reading input. Please enter valid number for proceeding further");
-            return -1;
-        }
-    }
-
-    public int readSelectionMultipleInput(Asker asker) {
-        try {
-            List<String> messages = Arrays.asList("Please select vehicle type from menu",
-                    "1 CAR",
-                    "2 Bike");
-            int input = asker.askIntMultipleMessage(messages);
+            int input = asker.askInt(message);
             return input;
         }catch(Exception e){
             logger.error("Error while reading user input from Shell", e);
@@ -53,22 +25,8 @@ public class InputReaderUtil {
     }
 
     /*
-    public String readVehicleRegistrationNumber() throws Exception {
-        String vehicleRegNumber= scan.nextLine();
-
-        try {
-            if(vehicleRegNumber == null || vehicleRegNumber.trim().length()==0) {
-                throw new IllegalArgumentException("Invalid input provided");
-            }
-        }catch(Exception e){
-            logger.error("Error while reading user input from Shell", e);
-            System.out.println("Error reading input. Please enter a valid string for vehicle registration number");
-            throw e;
-        }
-            return vehicleRegNumber;
-
-    }*/
-
+    * refactoring method : injecting asker wrapper to ask user input
+    * */
     public String readVehicleRegistrationNumber(Asker asker) throws Exception {
         String vehicleRegNumber = asker.askString("Please type the vehicle registration number and press enter key");
         try {
@@ -82,7 +40,6 @@ public class InputReaderUtil {
             throw e;
         }
         return vehicleRegNumber;
-
     }
 
 

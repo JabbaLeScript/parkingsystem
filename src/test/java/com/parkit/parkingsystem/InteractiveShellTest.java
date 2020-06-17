@@ -38,6 +38,9 @@ public class InteractiveShellTest {
     @Mock
     ParkingService parkingService;
 
+    @Mock
+    Asker askerLoad;
+
     @InjectMocks
     InteractiveShell interactiveShell;
 
@@ -48,45 +51,61 @@ public class InteractiveShellTest {
 
 
     @Test
-    void allowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
+    void testAllowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
 
-        Asker asker = new Asker(System.in, System.out);
+        //Asker askerLoad = new Asker(System.in, System.out);
 
-        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readSelection(askerLoad, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
+
         interactiveShell.loadInterface();
-        verify(parkingService).processIncomingVehicle(new ParkingSpot(), new Ticket(), asker);
+
+        verify(parkingService).processIncomingVehicle(new ParkingSpot(), new Ticket(), new Asker(System.in, System.out));
     }
 
     @Test
-    void allowVehicleExiting() throws Exception {
+    void testAllowVehicleExiting() throws Exception {
 
         Asker asker = new Asker(System.in, System.out);
-        when(inputReaderUtil.readSelection()).thenReturn(2);
+        Asker askerIncome = new Asker(System.in, System.out);
+
+        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(2);
+
+
         interactiveShell.loadInterface();
-        verify(parkingService).processExitingVehicle(new Ticket(), new FareCalculatorService(), asker);
+
+        verify(parkingService).processExitingVehicle(new Ticket(), new FareCalculatorService(), askerIncome);
     }
 
     @Test
-    void exitingFromTheSystem() throws Exception {
+    void testExitingFromTheSystem() throws Exception {
         //arrange
-       ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-       System.setErr(new PrintStream(errContent));
-       System.err.print("Exiting from the system!");
+        Asker asker = new Asker(System.in, System.out);
+        Asker askerIncome = new Asker(System.in, System.out);
 
-        when(inputReaderUtil.readSelection()).thenReturn(3);
+        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+
+        System.setErr(new PrintStream(errContent));
+
+        System.err.print("Exiting from the system!");
+
+        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(3);
 
         interactiveShell.loadInterface();
         assertThat("Exiting from the system!").isEqualTo(errContent.toString());
     }
 
     @Test
-    void unsupportedOptionMessage() throws Exception {
+    void testUnsupportedOptionMessage() throws Exception {
         //Arrange
+        Asker asker = new Asker(System.in, System.out);
+        Asker askerIncome = new Asker(System.in, System.out);
+
+
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
 
         System.err.print("Unsupported option. Please enter a number corresponding to the provided menu");
-        when(inputReaderUtil.readSelection()).thenReturn(5);
+        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(5);
 
         interactiveShell.loadInterface();
         assertThat("Unsupported option. Please enter a number corresponding to the provided menu")

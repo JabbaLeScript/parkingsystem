@@ -74,7 +74,7 @@ public class InputReaderUtilTest {
                 + "1 CAR" + separator
                 + "2 BIKE";
         when(asker.askInt(messages)).thenReturn(1);
-        assertThat(inputReaderUtil.readSelection(asker)).isEqualTo(1);
+        assertThat(inputReaderUtil.readSelection(asker, messages)).isEqualTo(1);
     }
 
     /*
@@ -83,11 +83,12 @@ public class InputReaderUtilTest {
     @Test
     void testUserEnterInvalidInput(){
         Asker asker = mock(Asker.class);
-        List<String> messages = Arrays.asList("Please select vehicle type from menu",
-                "1 CAR",
-                "2 Bike");
-        when(asker.askIntMultipleMessage(messages)).thenReturn(1);
-        assertThat(inputReaderUtil.readSelectionMultipleInput(asker)).isEqualTo(1);
+        String separator = System.getProperty("line.separator");
+        String messages = "Please select vehicle type from menu" + separator
+                + "1 CAR" + separator
+                + "2 BIKE";
+        when(asker.askInt(messages)).thenReturn(4);
+        assertThat(inputReaderUtil.readSelection(asker, messages)).isEqualTo(-1);
     }
 
 

@@ -4,6 +4,7 @@ import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.service.InteractiveShell;
 import com.parkit.parkingsystem.service.ParkingService;
+import com.parkit.parkingsystem.util.Asker;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +18,8 @@ public class App {
         InputReaderUtil inputReaderUtil = new InputReaderUtil();
         ParkingSpotDAO parkingSportDAO = new ParkingSpotDAO();
         TicketDAO ticketDAO = new TicketDAO();
+        Asker askerLoad = new Asker(System.in, System.out);
+
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSportDAO, ticketDAO);
         InteractiveShell interactiveShell = new InteractiveShell(inputReaderUtil, parkingSportDAO, ticketDAO, parkingService);
         interactiveShell.loadInterface();

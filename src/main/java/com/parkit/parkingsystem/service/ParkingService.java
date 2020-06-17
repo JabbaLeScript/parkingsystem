@@ -16,6 +16,13 @@ import java.util.Date;
 
 public class ParkingService {
 
+    /**
+     * this constante replace the original method designed to ask for user input
+     * */
+    public static final String CONS_SELECT_VEHICULE_TYPE = "Please select vehicle type from menu" + System.lineSeparator()
+            + "1 CAR" + System.lineSeparator()
+            + "2 BIKE";
+
     private Logger logger = LogManager.getLogger("ParkingService");
 
     //private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
@@ -44,7 +51,7 @@ public class ParkingService {
     * */
     public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket, Asker asker) throws Exception{
         try{
-            getNextParkingNumberIfAvailable(parkingSpot);
+            getNextParkingNumberIfAvailable(parkingSpot, asker);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                  String vehicleRegNumber = getVehichleRegNumber(asker);
                  System.out.println(vehicleRegNumber);
@@ -92,10 +99,10 @@ public class ParkingService {
     * - explicit dependencies added
     * - set property of parkingSpot object throught setter and not directly in the constructor
     * */
-    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot) throws Exception {
+    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot, Asker asker) throws Exception {
         int parkingId=0;
         try{
-            ParkingType parkingType = getVehichleType();
+            ParkingType parkingType = getVehichleType(asker);
             parkingId = parkingSpotDAO.getNextAvailableSlot(parkingType);
             if(parkingId > 0){
                 parkingSpot.setId(parkingId);
@@ -111,11 +118,8 @@ public class ParkingService {
         return parkingSpot;
     }
 
-    private ParkingType getVehichleType(){
-        System.out.println("Please select vehicle type from menu");
-        System.out.println("1 CAR");
-        System.out.println("2 BIKE");
-        int input = inputReaderUtil.readSelection();
+    private ParkingType getVehichleType(Asker asker){
+        int input = inputReaderUtil.readSelection(asker, CONS_SELECT_VEHICULE_TYPE);
         switch(input){
             case 1: {
                 return ParkingType.CAR;
