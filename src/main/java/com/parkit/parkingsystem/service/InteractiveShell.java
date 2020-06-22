@@ -23,20 +23,24 @@ public class InteractiveShell {
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
-    private ParkingService parkingService;
 
-    public InteractiveShell() {
-    }
+    private ParkingService parkingService;
+    private Asker asker;
+    private ParkingSpot parkingSpot;
+    private Ticket ticket;
+    private FareCalculatorService fareCalculatorService;
 
     /*
     * refactor the code to remove all static and introduce a constructor that sets the dependencies
     * it's in order to reduce dependency between my objects and my class
      * */
-    public InteractiveShell(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO, ParkingService parkingService) {
-        this.inputReaderUtil = inputReaderUtil;
-        this.parkingSpotDAO = parkingSpotDAO;
-        this.ticketDAO = ticketDAO;
+    public InteractiveShell(ParkingService parkingService) {
         this.parkingService = parkingService;
+        this.inputReaderUtil = new InputReaderUtil();
+        this.asker = new Asker(System.in, System.out);
+        this.parkingSpot = new ParkingSpot();
+        this.ticket = new Ticket();
+        this.fareCalculatorService = new FareCalculatorService();
     }
 
 
@@ -48,23 +52,21 @@ public class InteractiveShell {
 
         logger.info("App initialized!!!");
         System.out.println("Welcome to Parking System!");
-
+/*
         ParkingSpot parkingSpot = new ParkingSpot();
-        Ticket ticket = new Ticket();
+        Ticket ticket = new Ticket();*/
 
         boolean continueApp = true;
 
         while(continueApp){
-            Asker asker = new Asker(System.in, System.out);
-            int option = inputReaderUtil.readSelection(asker, CONS_SELECT_OPTION_TO_LOAD_MENU);
+            int option = inputReaderUtil.readSelection(this.asker, this.CONS_SELECT_OPTION_TO_LOAD_MENU);
             switch(option){
                 case 1: {
-                    Asker askerIncoming = new Asker(System.in, System.out);
-                    parkingService.processIncomingVehicle(parkingSpot, ticket, askerIncoming);
+                    parkingService.processIncomingVehicle(parkingSpot, ticket);
                     break;
                 }
                 case 2: {
-                    parkingService.processExitingVehicle(ticket, new FareCalculatorService(), asker);
+                    parkingService.processExitingVehicle(ticket, fareCalculatorService);
                     break;
                 }
                 case 3: {

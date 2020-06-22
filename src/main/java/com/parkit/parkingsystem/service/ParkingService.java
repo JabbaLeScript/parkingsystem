@@ -10,6 +10,7 @@ import com.parkit.parkingsystem.util.Asker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.security.sasl.SaslServer;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Date;
@@ -25,35 +26,27 @@ public class ParkingService {
 
     private Logger logger = LogManager.getLogger("ParkingService");
 
-    //private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-    //private FareCalculatorService fareCalculatorService;
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private  TicketDAO ticketDAO;
+    private Asker asker;
 
-    public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO){
-        this.inputReaderUtil = inputReaderUtil;
-        this.parkingSpotDAO = parkingSpotDAO;
-        this.ticketDAO = ticketDAO;
-    }
-
-    //to handle logger during test
-    public ParkingService(Logger logger, InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
-        this.logger = logger;
-        this.inputReaderUtil = inputReaderUtil;
-        this.parkingSpotDAO = parkingSpotDAO;
-        this.ticketDAO = ticketDAO;
+    public ParkingService(){
+        this.inputReaderUtil = new InputReaderUtil();
+        this.parkingSpotDAO = new ParkingSpotDAO();
+        this.ticketDAO = new TicketDAO();
+        this.asker = new Asker(System.in, System.out);
     }
 
 
     /*
     * ajout des parametres ParkingSpot et ticket pour tester la classe
     * */
-    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket, Asker asker) throws Exception{
+    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) throws Exception{
         try{
-            getNextParkingNumberIfAvailable(parkingSpot, asker);
+            getNextParkingNumberIfAvailable(parkingSpot);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
-                 String vehicleRegNumber = getVehichleRegNumber(asker);
+                 String vehicleRegNumber = getVehichleRegNumber();
                  System.out.println(vehicleRegNumber);
                 /*
                 *Story 2
@@ -89,7 +82,7 @@ public class ParkingService {
         }
     }
 
-    private String getVehichleRegNumber(Asker asker) throws Exception {
+    private String getVehichleRegNumber() throws Exception {
         //System.out.println("Please type the vehicle registration number and press enter key");
         String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(asker);
         return vehicleRegNumber;
@@ -99,10 +92,10 @@ public class ParkingService {
     * - explicit dependencies added
     * - set property of parkingSpot object throught setter and not directly in the constructor
     * */
-    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot, Asker asker) throws Exception {
+    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot) throws Exception {
         int parkingId=0;
         try{
-            ParkingType parkingType = getVehichleType(asker);
+            ParkingType parkingType = getVehichleType();
             parkingId = parkingSpotDAO.getNextAvailableSlot(parkingType);
             if(parkingId > 0){
                 parkingSpot.setId(parkingId);
@@ -118,7 +111,7 @@ public class ParkingService {
         return parkingSpot;
     }
 
-    private ParkingType getVehichleType(Asker asker){
+    private ParkingType getVehichleType(){
         int input = inputReaderUtil.readSelection(asker, CONS_SELECT_VEHICULE_TYPE);
         switch(input){
             case 1: {
@@ -137,9 +130,9 @@ public class ParkingService {
     /*
      * ajout des parametres ticket et FareCalculatorService pour tester la classe
      * */
-    public void processExitingVehicle(Ticket ticket, FareCalculatorService fareCalculatorService, Asker asker) {
+    public void processExitingVehicle(Ticket ticket, FareCalculatorService fareCalculatorService) {
         try{
-            String vehicleRegNumber = getVehichleRegNumber(asker);
+            String vehicleRegNumber = getVehichleRegNumber();
             ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);

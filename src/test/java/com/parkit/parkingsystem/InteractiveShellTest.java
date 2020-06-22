@@ -28,16 +28,22 @@ import static org.assertj.core.api.Assertions.*;
 public class InteractiveShellTest {
 
     @Mock
-    InputReaderUtil inputReaderUtil;
-
-    @Mock
-    ParkingSpotDAO parkingSpotDAO;
-
-    @Mock
-    TicketDAO ticketDAO;
-
-    @Mock
     ParkingService parkingService;
+
+    @Mock
+    Asker asker;
+
+    @Mock
+    ParkingSpot parkingSpot;
+
+    @Mock
+    Ticket ticket;
+
+    @Mock
+    FareCalculatorService fareCalculatorService;
+
+    @Mock
+    InputReaderUtil inputReaderUtil;
 
     @InjectMocks
     InteractiveShell interactiveShell;
@@ -50,39 +56,32 @@ public class InteractiveShellTest {
 
     @Test
     void testAllowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
-
-        Asker askerLoad = new Asker(System.in, System.out);
-        Asker askerIncome = new Asker(System.in, System.out);
+/*
         ParkingSpot ps = new ParkingSpot();
-        Ticket ticket = new Ticket();
+        Ticket ticket = new Ticket();*/
 
-        when(inputReaderUtil.readSelection(askerLoad, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
+        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
 
         interactiveShell.loadInterface();
 
-        //verify(inputReaderUtil).readSelection(askerLoad, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU);
-        verify(parkingService).processIncomingVehicle(ps, ticket, askerIncome);
+        verify(parkingService).processIncomingVehicle(parkingSpot, ticket);
     }
 
     @Test
     void testAllowVehicleExiting() throws Exception {
 
-        Asker asker = new Asker(System.in, System.out);
-        Asker askerIncome = new Asker(System.in, System.out);
-
-        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(2);
-
+        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(2);
 
         interactiveShell.loadInterface();
 
-        verify(parkingService).processExitingVehicle(new Ticket(), new FareCalculatorService(), askerIncome);
+        verify(parkingService).processExitingVehicle(ticket, fareCalculatorService);
     }
 
     @Test
     void testExitingFromTheSystem() throws Exception {
         //arrange
-        Asker asker = new Asker(System.in, System.out);
-        Asker askerIncome = new Asker(System.in, System.out);
+        //Asker asker = new Asker(System.in, System.out);
+        //Asker askerIncome = new Asker(System.in, System.out);
 
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
@@ -90,7 +89,7 @@ public class InteractiveShellTest {
 
         System.err.print("Exiting from the system!");
 
-        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(3);
+        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(3);
 
         interactiveShell.loadInterface();
         assertThat("Exiting from the system!").isEqualTo(errContent.toString());
@@ -99,15 +98,14 @@ public class InteractiveShellTest {
     @Test
     void testUnsupportedOptionMessage() throws Exception {
         //Arrange
-        Asker asker = new Asker(System.in, System.out);
-        Asker askerIncome = new Asker(System.in, System.out);
+
 
 
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
 
         System.err.print("Unsupported option. Please enter a number corresponding to the provided menu");
-        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(5);
+        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(5);
 
         interactiveShell.loadInterface();
         assertThat("Unsupported option. Please enter a number corresponding to the provided menu")
