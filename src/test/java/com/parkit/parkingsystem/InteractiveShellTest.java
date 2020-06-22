@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayOutputStream;
@@ -38,9 +39,6 @@ public class InteractiveShellTest {
     @Mock
     ParkingService parkingService;
 
-    @Mock
-    Asker askerLoad;
-
     @InjectMocks
     InteractiveShell interactiveShell;
 
@@ -53,13 +51,17 @@ public class InteractiveShellTest {
     @Test
     void testAllowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
 
-        //Asker askerLoad = new Asker(System.in, System.out);
+        Asker askerLoad = new Asker(System.in, System.out);
+        Asker askerIncome = new Asker(System.in, System.out);
+        ParkingSpot ps = new ParkingSpot();
+        Ticket ticket = new Ticket();
 
         when(inputReaderUtil.readSelection(askerLoad, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
 
         interactiveShell.loadInterface();
 
-        verify(parkingService).processIncomingVehicle(new ParkingSpot(), new Ticket(), new Asker(System.in, System.out));
+        //verify(inputReaderUtil).readSelection(askerLoad, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU);
+        verify(parkingService).processIncomingVehicle(ps, ticket, askerIncome);
     }
 
     @Test

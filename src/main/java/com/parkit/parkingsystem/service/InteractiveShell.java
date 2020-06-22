@@ -15,7 +15,7 @@ public class InteractiveShell {
     /**
     * this constante replace the original method designed to ask for user input
     * */
-    public static final String CONS_SELECT_OPTION_TO_LOAD_MENU = "Please select an option. Simply enter the number to choose an action" + System.lineSeparator()
+    public static String CONS_SELECT_OPTION_TO_LOAD_MENU = "Please select an option. Simply enter the number to choose an action" + System.lineSeparator()
             + "1 New Vehicle Entering - Allocate Parking Space" + System.lineSeparator()
             + "2 Vehicle Exiting - Generate Ticket Price" + System.lineSeparator()
             + "3 Shutdown System";
@@ -24,7 +24,6 @@ public class InteractiveShell {
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
     private ParkingService parkingService;
-    private Asker asker = new Asker(System.in, System.out);
 
     public InteractiveShell() {
     }
@@ -52,15 +51,16 @@ public class InteractiveShell {
 
         ParkingSpot parkingSpot = new ParkingSpot();
         Ticket ticket = new Ticket();
-        //Asker asker = new Asker(System.in, System.out);
 
         boolean continueApp = true;
 
         while(continueApp){
+            Asker asker = new Asker(System.in, System.out);
             int option = inputReaderUtil.readSelection(asker, CONS_SELECT_OPTION_TO_LOAD_MENU);
             switch(option){
                 case 1: {
-                    parkingService.processIncomingVehicle(parkingSpot, ticket, new Asker(System.in, System.out));
+                    Asker askerIncoming = new Asker(System.in, System.out);
+                    parkingService.processIncomingVehicle(parkingSpot, ticket, askerIncoming);
                     break;
                 }
                 case 2: {
