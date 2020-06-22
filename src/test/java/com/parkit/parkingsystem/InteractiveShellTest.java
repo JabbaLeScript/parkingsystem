@@ -56,9 +56,6 @@ public class InteractiveShellTest {
 
     @Test
     void testAllowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
-/*
-        ParkingSpot ps = new ParkingSpot();
-        Ticket ticket = new Ticket();*/
 
         when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
 
@@ -97,9 +94,6 @@ public class InteractiveShellTest {
 
     @Test
     void testUnsupportedOptionMessage() throws Exception {
-        //Arrange
-
-
 
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
