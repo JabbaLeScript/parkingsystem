@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 public class InteractiveShell {
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
+
     /**
     * this constante replace the original method designed to ask for user input
     * */
@@ -20,12 +21,12 @@ public class InteractiveShell {
             + "2 Vehicle Exiting - Generate Ticket Price" + System.lineSeparator()
             + "3 Shutdown System";
 
-    private InputReaderUtil inputReaderUtil;
+
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
 
+    private InputReaderUtil inputReaderUtil;
     private ParkingService parkingService;
-    private Asker asker;
     private ParkingSpot parkingSpot;
     private Ticket ticket;
     private FareCalculatorService fareCalculatorService;
@@ -34,10 +35,9 @@ public class InteractiveShell {
     * refactor the code to remove all static and introduce a constructor that sets the dependencies
     * it's in order to reduce dependency between my objects and my class
      * */
-    public InteractiveShell(ParkingService parkingService) {
-        this.parkingService = parkingService;
+    public InteractiveShell() {
+        this.parkingService = new ParkingService();
         this.inputReaderUtil = new InputReaderUtil();
-        this.asker = new Asker(System.in, System.out);
         this.parkingSpot = new ParkingSpot();
         this.ticket = new Ticket();
         this.fareCalculatorService = new FareCalculatorService();
@@ -58,8 +58,11 @@ public class InteractiveShell {
 
         boolean continueApp = true;
 
+
         while(continueApp){
-            int option = inputReaderUtil.readSelection(this.asker, this.CONS_SELECT_OPTION_TO_LOAD_MENU);
+            loadMenu();
+            int option = inputReaderUtil.readSelection();
+            //int option = inputReaderUtil.readSelection(this.asker, this.CONS_SELECT_OPTION_TO_LOAD_MENU);
             switch(option){
                 case 1: {
                     parkingService.processIncomingVehicle(parkingSpot, ticket);
@@ -77,5 +80,12 @@ public class InteractiveShell {
             }
             continueApp = false;
         }
+    }
+
+    private static void loadMenu(){
+        System.out.println("Please select an option. Simply enter the number to choose an action");
+        System.out.println("1 New Vehicle Entering - Allocate Parking Space");
+        System.out.println("2 Vehicle Exiting - Generate Ticket Price");
+        System.out.println("3 Shutdown System");
     }
 }

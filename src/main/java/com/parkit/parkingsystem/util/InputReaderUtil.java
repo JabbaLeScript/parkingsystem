@@ -8,7 +8,39 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InputReaderUtil {
+
+    //private static Scanner scan = new Scanner(System.in);
+    /**
+    * injectiondependency
+    * */
+    private Scanner scan;
     private static final Logger logger = LogManager.getLogger("InputReaderUtil");
+
+    public InputReaderUtil() {
+      //  this.scan = new Scanner(System.in);
+    }
+
+    public int readSelection(){
+        try {
+            int input = Integer.parseInt(scan.nextLine());
+            return input;
+        }catch(Exception e){
+            logger.error("Error while reading user input from Shell", e);
+            System.out.println("Error reading input. Please enter valid number for proceeding further");
+            return -1;
+        }
+    }
+
+    public int readSelection(Scanner scan){
+        try {
+            int input = Integer.parseInt(scan.nextLine());
+            return input;
+        }catch(Exception e){
+            logger.error("Error while reading user input from Shell", e);
+            System.out.println("Error reading input. Please enter valid number for proceeding further");
+            return -1;
+        }
+    }
 
     /*
      * refactoring method : injecting asker wrapper to ask user input
@@ -40,6 +72,23 @@ public class InputReaderUtil {
             throw e;
         }
         return vehicleRegNumber;
+    }
+
+    /**
+    * test failed to test exception
+    * */
+    public String readVehicleRegistrationNumber(Scanner scan) throws Exception{
+        String vehicleRegNumber= scan.nextLine();
+        try {
+            if(vehicleRegNumber == null ||vehicleRegNumber.trim().length()==0){
+                throw new IllegalArgumentException("Invalid input provided");
+            }
+        return vehicleRegNumber;
+        }catch(Exception e){
+            logger.error("Error while reading user input from Shell", e);
+            System.out.println("Error reading input. Please enter a valid string for vehicle registration number");
+            throw e;
+        }
     }
 
 

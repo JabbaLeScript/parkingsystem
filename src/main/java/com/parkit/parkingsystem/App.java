@@ -13,14 +13,8 @@ public class App {
     private static final Logger logger = LogManager.getLogger("");
 
     public static void main(String args[]) throws Exception {
-
         logger.info("Initializing Parking System");
-
-        ParkingService parkingService = new ParkingService();
-
-        //InteractiveShell interactiveShell = new InteractiveShell(inputReaderUtil, parkingSportDAO, ticketDAO, parkingService);
-        InteractiveShell interactiveShell = new InteractiveShell(parkingService);
-
+        InteractiveShell interactiveShell = new InteractiveShell();
         interactiveShell.loadInterface();
     }
 }

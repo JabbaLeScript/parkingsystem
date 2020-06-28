@@ -53,57 +53,74 @@ public class InteractiveShellTest {
         MockitoAnnotations.initMocks(this);
     }
 
-
+    /**
+     * rename:
+     * testLoadInterfaceCallProcessIncomingVehicle
+    * */
     @Test
     void testAllowNewVehicletoEnterandAllocateParkingSpace() throws Exception {
 
-        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
+        //when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(1);
+
+        when(inputReaderUtil.readSelection()).thenReturn(1);
 
         interactiveShell.loadInterface();
 
         verify(parkingService).processIncomingVehicle(parkingSpot, ticket);
     }
-
+    /**
+    * rename:
+     * testLoadInterfaceProcessExitingVehicule
+    * */
     @Test
     void testAllowVehicleExiting() throws Exception {
 
-        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(2);
+        //when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(2);
+
+        when(inputReaderUtil.readSelection()).thenReturn(2);
 
         interactiveShell.loadInterface();
 
         verify(parkingService).processExitingVehicle(ticket, fareCalculatorService);
     }
 
+    /**
+     * rename:
+     * testLoadIntefaceExitingSystem
+     */
     @Test
     void testExitingFromTheSystem() throws Exception {
-        //arrange
-        //Asker asker = new Asker(System.in, System.out);
-        //Asker askerIncome = new Asker(System.in, System.out);
 
-        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        PrintStream save_out=System.out;
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
 
-        System.setErr(new PrintStream(errContent));
-
-        System.err.print("Exiting from the system!");
-
-        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(3);
-
+        //when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(3);
+        when(inputReaderUtil.readSelection()).thenReturn(3);
         interactiveShell.loadInterface();
-        assertThat("Exiting from the system!").isEqualTo(errContent.toString());
+
+        assertThat(out.toString()).contains("Exiting from the system!\r\n");
     }
 
+    /**
+     * rename:
+     *testLoadInterfaceThrowException
+     *
+     */
     @Test
     void testUnsupportedOptionMessage() throws Exception {
 
-        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-        System.setErr(new PrintStream(errContent));
 
-        System.err.print("Unsupported option. Please enter a number corresponding to the provided menu");
-        when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(5);
+        PrintStream save_out = System.out;
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+
+        //when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(5);
+        when(inputReaderUtil.readSelection()).thenReturn(10);
 
         interactiveShell.loadInterface();
-        assertThat("Unsupported option. Please enter a number corresponding to the provided menu")
-                .isEqualTo(errContent.toString());
+        assertThat(out.toString()).contains("Unsupported option. Please enter a number corresponding to the provided menu");
     }
 
 
