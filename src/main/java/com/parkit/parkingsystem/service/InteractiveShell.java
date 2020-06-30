@@ -4,7 +4,6 @@ import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.util.Asker;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,14 +11,6 @@ import org.apache.logging.log4j.Logger;
 public class InteractiveShell {
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
-
-    /**
-    * this constante replace the original method designed to ask for user input
-    * */
-    public static String CONS_SELECT_OPTION_TO_LOAD_MENU = "Please select an option. Simply enter the number to choose an action" + System.lineSeparator()
-            + "1 New Vehicle Entering - Allocate Parking Space" + System.lineSeparator()
-            + "2 Vehicle Exiting - Generate Ticket Price" + System.lineSeparator()
-            + "3 Shutdown System";
 
 
     private ParkingSpotDAO parkingSpotDAO;

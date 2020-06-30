@@ -31,9 +31,14 @@ public class InputReaderUtil {
         }
     }
 
+
+    /*
+    new constructor added to test this method only
+     */
     public int readSelection(Scanner scan){
         try {
             int input = Integer.parseInt(scan.nextLine());
+            System.out.println(input);
             return input;
         }catch(Exception e){
             logger.error("Error while reading user input from Shell", e);
@@ -75,7 +80,7 @@ public class InputReaderUtil {
     }
 
     /**
-    * test failed to test exception
+    * new constructor added to test this method only
     * */
     public String readVehicleRegistrationNumber(Scanner scan) throws Exception{
         String vehicleRegNumber= scan.nextLine();

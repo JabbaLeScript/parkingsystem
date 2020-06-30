@@ -32,7 +32,6 @@ public class InputReaderUtilTest {
         String input = "1";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         System.setIn(inputStream);
-
         Scanner scan = new Scanner(System.in);
 
         int result = inputReaderUtil.readSelection(scan);

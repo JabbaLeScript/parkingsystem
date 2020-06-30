@@ -14,6 +14,7 @@ import javax.security.sasl.SaslServer;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.Scanner;
 
 public class ParkingService {
 
@@ -29,13 +30,15 @@ public class ParkingService {
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
-    private Asker asker;
+    //private Asker asker;
+    //private Scanner scan;
 
     public ParkingService(){
         this.inputReaderUtil = new InputReaderUtil();
         this.parkingSpotDAO = new ParkingSpotDAO();
         this.ticketDAO = new TicketDAO();
-        this.asker = new Asker(System.in, System.out);
+        //this.scan = new Scanner(System.in);
+      //  this.asker = new Asker(System.in, System.out);
     }
 
 
@@ -83,8 +86,9 @@ public class ParkingService {
     }
 
     private String getVehichleRegNumber() throws Exception {
-        //System.out.println("Please type the vehicle registration number and press enter key");
-        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(asker);
+        System.out.println("Please type the vehicle registration number and press enter key");
+        //modification : injection of a scanner
+        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(new Scanner(System.in));
         return vehicleRegNumber;
     }
 
@@ -111,8 +115,13 @@ public class ParkingService {
         return parkingSpot;
     }
 
+    //changed to public
     private ParkingType getVehichleType(){
-        int input = inputReaderUtil.readSelection(asker, CONS_SELECT_VEHICULE_TYPE);
+        System.out.println("Please select vehicle type from menu");
+        System.out.println("1 CAR");
+        System.out.println("2 BIKE");
+        int input = inputReaderUtil.readSelection();
+        System.out.println(input);
         switch(input){
             case 1: {
                 return ParkingType.CAR;
