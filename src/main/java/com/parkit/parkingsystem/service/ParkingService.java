@@ -6,7 +6,6 @@ import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import com.parkit.parkingsystem.util.Asker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,8 +86,7 @@ public class ParkingService {
 
     private String getVehichleRegNumber() throws Exception {
         System.out.println("Please type the vehicle registration number and press enter key");
-        //modification : injection of a scanner
-        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber(new Scanner(System.in));
+        String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber();
         return vehicleRegNumber;
     }
 

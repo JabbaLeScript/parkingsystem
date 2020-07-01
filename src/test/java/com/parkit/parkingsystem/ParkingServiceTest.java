@@ -85,7 +85,7 @@ public class ParkingServiceTest {
     }
 
 
-/*
+
    @Test
     void testProcessIncomingVehiculeDisplayVehiculeRegNumberAndInTime() throws Exception {
 
@@ -95,8 +95,8 @@ public class ParkingServiceTest {
         ticket.setOutTime(new Date());
         //Asker asker = new Asker(System.in, System.out);
 
-        when(inputReaderUtil.readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE)).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("1234");
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("1234");
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
         when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(false);
         //when(parkingSpotDAO.updateParking(parkingSpot)).thenReturn(false);
@@ -111,12 +111,10 @@ public class ParkingServiceTest {
         assertThat(ticket.getVehicleRegNumber()).isEqualTo("1234");
         assertThat(ticket.getInTime()).isEqualTo(ticket.getInTime());
     }
-    /*
 
-    *//*
-    * Assert that the instance variable of parkingspot object are correctly setted
-    * *//*
 
+
+     //Assert that the instance variable of parkingspot object are correctly setted
     private static Stream<Arguments> paramValueNextParkingNumberIsAvailable(){
         return Stream.of(
                 Arguments.of(1, ParkingType.CAR),
@@ -131,12 +129,12 @@ public class ParkingServiceTest {
         ParkingSpot parkingSpot = new ParkingSpot();
         //Asker asker = new Asker(System.in, System.out);
 
-        when(inputReaderUtil.readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE)).thenReturn(input);
+        when(inputReaderUtil.readSelection()).thenReturn(input);
         when(parkingSpotDAO.getNextAvailableSlot(parkingType)).thenReturn(100);
 
 
         service.getNextParkingNumberIfAvailable(parkingSpot);
-        verify(inputReaderUtil).readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE);
+        verify(inputReaderUtil).readSelection();
         verify(parkingSpotDAO).getNextAvailableSlot(parkingType);
 
         //assert
@@ -145,21 +143,17 @@ public class ParkingServiceTest {
         assertThat(parkingSpot.isAvailable()).isEqualTo(true);
     }
 
-    *//*
-    * assert parking
-    * *//*
 
-    *//*
-    * throws exception if parking spot is null or parkingspot id <= 0
-    *
-    * *//*
+
+    //assert parking
+    //throws exception if parking spot is null or parkingspot id <= 0
     @Test()
     void testNextParkingNumberIsNotAvailableCauseIsFull() throws Exception {
         //when
         ParkingSpot parkingSpot = new ParkingSpot();
         //Asker asker = new Asker(System.in, System.out);
 
-        when(inputReaderUtil.readSelection(asker,service.CONS_SELECT_VEHICULE_TYPE)).thenReturn(1);
+        when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(0);
 
         try {
@@ -168,39 +162,39 @@ public class ParkingServiceTest {
             assertThat(e).isInstanceOf(Exception.class);
         }
 
-        verify(inputReaderUtil).readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE);
+        verify(inputReaderUtil).readSelection();
         verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
 
     }
 
-    *//*
-     * when the user enter a wrong vehicule type, throw exception.
-     * Ie: wrong input provided
-     * *//*
+
+
+
+     /*when the user enter a wrong vehicule type, throw exception.
+     Ie: wrong input provided*/
+
     @Test
     void testExceptionWhenUserEnterAWrongVehiculeTypeNumber() throws Exception {
         ParkingSpot parkingSpot = new ParkingSpot();
-        Asker asker = new Asker(System.in, System.out);
-        when(inputReaderUtil.readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE)).thenReturn(3);
+        //Asker asker = new Asker(System.in, System.out);
+        when(inputReaderUtil.readSelection()).thenReturn(3);
         try {
             service.getNextParkingNumberIfAvailable(parkingSpot);
 
         }catch (IllegalArgumentException e){
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
-            assertThat(inputReaderUtil.readSelection(asker, anyString())).isEqualTo(-1);
+            assertThat(inputReaderUtil.readSelection()).isEqualTo(-1);
         }
 
     }
 
 
-    *//*
-    * test all information are up to date
-    *
-    * *//*
+
+    //test all information are up to date
+
     @Test
     void testTicketInformationAreUpdatedAtExiting() throws Exception {
 
-        //Asker asker = new Asker(System.in, System.out);
         FareCalculatorService calculator = new FareCalculatorService();
         ParkingSpot parkingSpot = new ParkingSpot(12, ParkingType.CAR, false);
         Ticket ticket = new Ticket();
@@ -208,7 +202,7 @@ public class ParkingServiceTest {
         ticket.setVehicleRegNumber("1234");
         ticket.setParkingSpot(parkingSpot);
 
-        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("1234");
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("1234");
         when(ticketDAO.getTicket("1234")).thenReturn(ticket);
         when(ticketDAO.updateTicket(ticket)).thenReturn(true);
         when(parkingSpotDAO.updateParking(parkingSpot)).thenReturn(true);
@@ -237,7 +231,7 @@ public class ParkingServiceTest {
         ticket.setVehicleRegNumber("1234");
         ticket.setParkingSpot(parkingSpot);
 
-        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("1234");
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("1234");
         when(ticketDAO.getTicket("1234")).thenReturn(ticket);
         when(ticketDAO.updateTicket(ticket)).thenReturn(false);
 
@@ -246,9 +240,9 @@ public class ParkingServiceTest {
         assertThat("Unable to update ticket information. Error occurred").isEqualTo(errContent.toString());
     }
 
-    *//*
-    * if a user enter a null number or empty value, return an exception
-    * *//*
+
+    //if a user enter a null number or empty value, return an exception
+
     @Test
     void testExceptionImpossibleToGetVehiculeRegNumber() throws Exception {
 
@@ -259,9 +253,9 @@ public class ParkingServiceTest {
         //Asker asker = new Asker(System.in, System.out);
 
 
-        when(inputReaderUtil.readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE)).thenReturn(1);
+        when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(2);
-        when(inputReaderUtil.readVehicleRegistrationNumber(asker)).thenReturn("");
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("");
 
         try {
             service.processIncomingVehicle(parkingSpot,ticket);
@@ -269,8 +263,8 @@ public class ParkingServiceTest {
         }catch (Exception e){
             assertThat(e).isInstanceOf(Exception.class);
         }
-       verify(inputReaderUtil,times(1)).readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE);
-       verify(inputReaderUtil, times(1)).readVehicleRegistrationNumber(asker);
+       verify(inputReaderUtil,times(1)).readSelection();
+       verify(inputReaderUtil, times(1)).readVehicleRegistrationNumber();
 
     }
 
@@ -278,12 +272,11 @@ public class ParkingServiceTest {
 
 
 
-    *//*
-    * Story 2 : checking if the user is a recurrent user
-    * Step 1) initialise objects
-    * Step2) initialise stubs
-    * step3) verification that the method is invoked
-    * *//*
+
+     /*Story 2 : checking if the user is a recurrent user
+     Step 1) initialise objects
+     Step2) initialise stubs
+     step3) verification that the method is invoked*/
     @Test
     void checkIfReccuringUserisInvoked() throws Exception {
 
@@ -295,7 +288,7 @@ public class ParkingServiceTest {
         ticketA.setVehicleRegNumber("1234");
         ticketA.setParkingSpot(parkingSpotA);
 
-        Asker asker = new Asker(System.in, System.out);
+        //Asker asker = new Asker(System.in, System.out);
 
 
         Ticket ticketB = new Ticket();
@@ -303,8 +296,8 @@ public class ParkingServiceTest {
         ticketB.setVehicleRegNumber("1234");
         ticketB.setParkingSpot(parkingSpotB);
 
-        when(inputReaderUtil.readSelection(asker, service.CONS_SELECT_VEHICULE_TYPE)).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber(new Asker(System.in, System.out))).thenReturn("1234");
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("1234");
         // passer un objet à place de any
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
         when(ticketDAO.getReccuringUser(ticketA.getVehicleRegNumber())).thenReturn(true);
@@ -313,7 +306,6 @@ public class ParkingServiceTest {
 
         //
         verify(ticketDAO, times(1)).getReccuringUser(ticketA.getVehicleRegNumber());
-    }*/
-
+    }
 
 }
