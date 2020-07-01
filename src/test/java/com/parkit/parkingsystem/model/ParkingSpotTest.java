@@ -27,4 +27,17 @@ class ParkingSpotTest {
     void testHashCodeEquality(){
         assertThat(parkingSpot1.hashCode()).isEqualTo(parkingSpot2.hashCode());
     }
+
+    @Test
+    void testReturnFalseWhenTheClassAreNoTheSame(){
+        Ticket ticket = new Ticket();
+        boolean result = parkingSpot1.equals(ticket);
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    void testReturnFalseWhenNull(){
+        boolean result = parkingSpot1.equals(null);
+        assertThat(result).isEqualTo(false);
+    }
 }
