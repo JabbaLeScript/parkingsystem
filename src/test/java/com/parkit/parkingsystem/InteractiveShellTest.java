@@ -7,7 +7,6 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.InteractiveShell;
 import com.parkit.parkingsystem.service.ParkingService;
-import com.parkit.parkingsystem.util.Asker;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +28,6 @@ public class InteractiveShellTest {
 
     @Mock
     ParkingService parkingService;
-
-    @Mock
-    Asker asker;
 
     @Mock
     ParkingSpot parkingSpot;

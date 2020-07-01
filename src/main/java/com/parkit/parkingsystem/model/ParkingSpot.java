@@ -54,6 +54,7 @@ public class ParkingSpot {
         return id == that.id;
     }
 
+
     @Override
     public int hashCode() {
         return id;

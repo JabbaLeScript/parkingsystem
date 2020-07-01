@@ -10,7 +10,6 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import com.parkit.parkingsystem.util.Asker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,10 +43,10 @@ public class ParkingDataBaseIT {
 
     @BeforeEach
     private void setUpPerTest() throws Exception {
-        Asker asker = new Asker(System.in, System.out);
+        //Asker asker = new Asker(System.in, System.out);
 
-        when(inputReaderUtil.readSelection(asker, anyString())).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber(new Asker(System.in, System.out))).thenReturn("ABCDEF");
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
         dataBasePrepareService.clearDataBaseEntries();
     }
 
@@ -58,7 +57,7 @@ public class ParkingDataBaseIT {
 
     @Test
     public void testParkingACar() throws Exception {
-        Asker asker = new Asker(System.in, System.out);
+        //Asker asker = new Asker(System.in, System.out);
 
         ParkingService parkingService = new ParkingService();
         parkingService.processIncomingVehicle(new ParkingSpot(), new Ticket());
