@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 public class FareCalculatorService {
 
+    //added to format the date time from long to double
     private static double formatter(long aDuration, Function<Long, Double> aTransformation){
         return aTransformation.apply(aDuration);
     }

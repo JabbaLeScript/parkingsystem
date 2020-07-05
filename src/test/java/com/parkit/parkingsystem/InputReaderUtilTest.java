@@ -1,25 +1,31 @@
 package com.parkit.parkingsystem;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.lang.NullArgumentException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.internal.matchers.Null;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class InputReaderUtilTest {
 
+   // private InputReaderUtil inputReaderUtil;
 
     @BeforeEach
     void setUp()
     {
+     //   inputReaderUtil = new InputReaderUtil();
     }
 
     /**
@@ -28,64 +34,68 @@ public class InputReaderUtilTest {
     @Test
     void testUserEnterAValidInput() throws Exception {
 
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
         String input = "1";
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
-        Scanner scan = new Scanner(System.in);
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
 
-        int result = inputReaderUtil.readSelection(scan);
+        InputReaderUtil inputReaderUtil2 = new InputReaderUtil();
+        int result = inputReaderUtil2.readSelection();
         assertThat(result).isEqualTo(1);
 
     }
-    @Test
+
+   @Test
     void testUserEnterAInValidInput(){
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
-        String input = "b";
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
+       String input = "b";
+       InputStream in = new ByteArrayInputStream(input.getBytes());
+       System.setIn(in);
 
-        Scanner scan = new Scanner(System.in);
+       InputReaderUtil inputReaderUtil = new InputReaderUtil();
+        int result = inputReaderUtil.readSelection();
 
-        int result = inputReaderUtil.readSelection(scan);
         assertThat(result).isEqualTo(-1);
     }
 
    @Test
     void testUserEnterAValidVehicleRegNumber() throws Exception {
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
+        /*InputReaderUtil inputReaderUtil = new InputReaderUtil();
         String input = "b";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
-        String result = inputReaderUtil.readVehicleRegistrationNumber(new Scanner(System.in));
-        assertThat(result).isEqualTo("b");
+        System.setIn(inputStream);*/
+
+       String input = "13421";
+       InputStream in = new ByteArrayInputStream(input.getBytes());
+       System.setIn(in);
+
+       InputReaderUtil inputReaderUtil = new InputReaderUtil();
+       String result = inputReaderUtil.readVehicleRegistrationNumber();
+        assertThat(result).isEqualTo("13421");
     }
 
-    /**
-    * not working for now
-    * */
-   /* @Test
+    @Test
     void testExceptionIfVehiculeRegNumberIsNull() throws Exception {
 
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
-        String input = null;
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
-        Scanner scan = new Scanner(System.in);
-        inputReaderUtil.readVehicleRegistrationNumber(scan);
+        String input = "";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
 
-    }*/
+        InputReaderUtil inputReaderUtil = new InputReaderUtil();
+        //inputReaderUtil.readVehicleRegistrationNumber();
+        assertThrows(Exception.class,
+                () -> {inputReaderUtil.readVehicleRegistrationNumber();});
+
+    }
 
     @Test
     void testExceptionIfVehiculeRegNumberIsLengght0WithSpaces() throws Exception {
 
-        InputReaderUtil inputReaderUtil = new InputReaderUtil();
         String input = " ";
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
-        Scanner scan = new Scanner(System.in);
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        InputReaderUtil inputReaderUtil = new InputReaderUtil();
         assertThrows(Exception.class, ()->{
-            inputReaderUtil.readVehicleRegistrationNumber(scan);
+            inputReaderUtil.readVehicleRegistrationNumber();
         });
     }
 }

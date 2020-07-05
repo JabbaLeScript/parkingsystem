@@ -17,27 +17,16 @@ import java.util.Scanner;
 
 public class ParkingService {
 
-    /**
-     * this constante replace the original method designed to ask for user input
-     * */
-    public static final String CONS_SELECT_VEHICULE_TYPE = "Please select vehicle type from menu" + System.lineSeparator()
-            + "1 CAR" + System.lineSeparator()
-            + "2 BIKE";
-
     private Logger logger = LogManager.getLogger("ParkingService");
 
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
-    //private Asker asker;
-    //private Scanner scan;
 
     public ParkingService(){
         this.inputReaderUtil = new InputReaderUtil();
         this.parkingSpotDAO = new ParkingSpotDAO();
         this.ticketDAO = new TicketDAO();
-        //this.scan = new Scanner(System.in);
-      //  this.asker = new Asker(System.in, System.out);
     }
 
 

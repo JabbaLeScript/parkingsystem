@@ -91,7 +91,6 @@ public class InteractiveShellTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
 
-        //when(inputReaderUtil.readSelection(asker, interactiveShell.CONS_SELECT_OPTION_TO_LOAD_MENU)).thenReturn(3);
         when(inputReaderUtil.readSelection()).thenReturn(3);
         interactiveShell.loadInterface();
 
