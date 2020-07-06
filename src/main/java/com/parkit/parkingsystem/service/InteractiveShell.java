@@ -11,11 +11,6 @@ import org.apache.logging.log4j.Logger;
 public class InteractiveShell {
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
-
-
-    private ParkingSpotDAO parkingSpotDAO;
-    private TicketDAO ticketDAO;
-
     private InputReaderUtil inputReaderUtil;
     private ParkingService parkingService;
     private ParkingSpot parkingSpot;
@@ -26,8 +21,8 @@ public class InteractiveShell {
     * refactor the code to remove all static and introduce a constructor that sets the dependencies
     * it's in order to reduce dependency between my objects and my class
      * */
-    public InteractiveShell() {
-        this.parkingService = new ParkingService();
+    public InteractiveShell(ParkingService service) {
+        this.parkingService = service;
         this.inputReaderUtil = new InputReaderUtil();
         this.parkingSpot = new ParkingSpot();
         this.ticket = new Ticket();

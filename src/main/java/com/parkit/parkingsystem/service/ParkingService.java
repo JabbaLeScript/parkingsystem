@@ -8,12 +8,8 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.security.sasl.SaslServer;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Date;
-import java.util.Scanner;
+
 
 public class ParkingService {
 
@@ -23,17 +19,16 @@ public class ParkingService {
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
 
-    public ParkingService(){
-        this.inputReaderUtil = new InputReaderUtil();
-        this.parkingSpotDAO = new ParkingSpotDAO();
-        this.ticketDAO = new TicketDAO();
+    public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO){
+        this.inputReaderUtil = inputReaderUtil;
+        this.parkingSpotDAO = parkingSpotDAO;
+        this.ticketDAO = ticketDAO;
     }
-
 
     /*
     * ajout des parametres ParkingSpot et ticket pour tester la classe
     * */
-    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket) throws Exception{
+    public void processIncomingVehicle(ParkingSpot parkingSpot, Ticket ticket){
         try{
             getNextParkingNumberIfAvailable(parkingSpot);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
@@ -67,11 +62,10 @@ public class ParkingService {
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
             }
         }catch(Exception e){
-            e.getMessage();
             logger.error("Unable to process incoming vehicle",e);
-            throw  e;
         }
     }
+
 
     private String getVehichleRegNumber() throws Exception {
         System.out.println("Please type the vehicle registration number and press enter key");
@@ -82,8 +76,9 @@ public class ParkingService {
     /*
     * - explicit dependencies added
     * - set property of parkingSpot object throught setter and not directly in the constructor
+    * - change Exception to illegal arg exception and throw it
     * */
-    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot) throws Exception {
+    public ParkingSpot getNextParkingNumberIfAvailable(ParkingSpot parkingSpot) throws IllegalArgumentException{
         int parkingId=0;
         try{
             ParkingType parkingType = getVehichleType();
@@ -92,7 +87,7 @@ public class ParkingService {
                 parkingSpot.setId(parkingId);
                 parkingSpot.setParkingType(parkingType);
                 parkingSpot.setAvailable(true);
-            }else throw new Exception("Error fetching parking number from DB. Parking slots might be full");
+            }else throw new IllegalArgumentException("Error fetching parking number from DB. Parking slots might be full");
         } catch(IllegalArgumentException ie){
             logger.error("Error parsing user input for type of vehicle", ie);
         }
@@ -102,8 +97,8 @@ public class ParkingService {
         return parkingSpot;
     }
 
-    //changed to public
-    private ParkingType getVehichleType(){
+    // The method must tell that it throws an excetion - missing declaration
+    private ParkingType getVehichleType() throws IllegalArgumentException{
         System.out.println("Please select vehicle type from menu");
         System.out.println("1 CAR");
         System.out.println("2 BIKE");

@@ -51,7 +51,7 @@ public class InputReaderUtilTest {
        System.setIn(in);
 
        InputReaderUtil inputReaderUtil = new InputReaderUtil();
-        int result = inputReaderUtil.readSelection();
+       int result = inputReaderUtil.readSelection();
 
         assertThat(result).isEqualTo(-1);
     }

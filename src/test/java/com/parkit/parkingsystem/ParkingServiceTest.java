@@ -8,7 +8,6 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,21 +15,19 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
 import java.io.*;
 import java.util.Date;
-import java.util.Scanner;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -42,17 +39,13 @@ public class ParkingServiceTest {
     private  ParkingSpotDAO parkingSpotDAO;
     @Mock
     private  TicketDAO ticketDAO;
-    /*@Mock
-    private Asker asker;*/
-    /*@Mock
-    private Scanner scan;*/
-    @InjectMocks
+
     private ParkingService service;
 
     @BeforeEach
     private void setUpPerTest()
     {
-        MockitoAnnotations.initMocks(this);
+        service = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
     }
 
     /*
@@ -61,16 +54,16 @@ public class ParkingServiceTest {
 
     @ParameterizedTest(name ="test incoming vehicule")
     @ValueSource(ints = {1, 2})
-    public void testProcessIncomingVehicleDisplayParkingSpotID(int input) throws Exception {
+    public void testProcessIncomingVehicleSetParkingSpotID(int input) throws Exception {
 
         ParkingSpot parkingSpot = new ParkingSpot();
         Ticket ticket = new Ticket();
         ;
         when(inputReaderUtil.readSelection()).thenReturn(input);
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(3);
-        //when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(false);
         when(parkingSpotDAO.updateParking(parkingSpot)).thenReturn(false);
-        when(ticketDAO.saveTicket(any(Ticket.class))).thenReturn(true);
+        //when(ticketDAO.saveTicket(any(Ticket.class))).thenReturn(true);
+        when(ticketDAO.saveTicket(ticket)).thenReturn(true);
         /*
         * next available vehicule Verification
         *
@@ -86,7 +79,7 @@ public class ParkingServiceTest {
 
 
    @Test
-    void testProcessIncomingVehiculeDisplayVehiculeRegNumberAndInTime() throws Exception {
+    void testProcessIncomingVehiculeSetVehiculeRegNumberAndInTime() throws Exception {
 
         Ticket ticket = new Ticket();
         ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
@@ -111,7 +104,21 @@ public class ParkingServiceTest {
         assertThat(ticket.getInTime()).isEqualTo(ticket.getInTime());
     }
 
+    @Test
+    void testUnableToProcessIncomingVehicle() {
 
+        ParkingSpot parkingSpot = new ParkingSpot();
+        Ticket ticket = new Ticket();
+
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(0);
+
+        try {
+        service.processIncomingVehicle(parkingSpot, ticket);
+        }catch (Exception e){
+            assertThat(e).isInstanceOf(Exception.class);
+        }
+    }
 
      //Assert that the instance variable of parkingspot object are correctly setted
     private static Stream<Arguments> paramValueNextParkingNumberIsAvailable(){
@@ -123,7 +130,7 @@ public class ParkingServiceTest {
 
     @ParameterizedTest
     @MethodSource({"paramValueNextParkingNumberIsAvailable"})
-    void testTheNextParkingNumberisAvailable(int input, ParkingType parkingType) throws Exception {
+    void testTheNextParkingNumberisAvailable(int input, ParkingType parkingType) throws IllegalArgumentException {
 
         ParkingSpot parkingSpot = new ParkingSpot();
         //Asker asker = new Asker(System.in, System.out);
@@ -147,11 +154,11 @@ public class ParkingServiceTest {
     //assert parking
     //throws exception if parking spot is null or parkingspot id <= 0
     @Test()
-    void testNextParkingNumberIsNotAvailableCauseIsFull() throws Exception {
+    void testNextParkingNumberIsNotAvailableCauseIsFull() throws IllegalArgumentException{
         //when
-        ParkingSpot parkingSpot = new ParkingSpot();
-        //Asker asker = new Asker(System.in, System.out);
 
+        //ParkingService service = new ParkingService();
+        ParkingSpot parkingSpot = new ParkingSpot();
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(0);
 
