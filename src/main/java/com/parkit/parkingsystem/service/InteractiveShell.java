@@ -34,7 +34,7 @@ public class InteractiveShell {
     * this method was previously static ...
     *
     * */
-    public void loadInterface() throws Exception {
+    public void loadInterface() {
 
         logger.info("App initialized!!!");
         System.out.println("Welcome to Parking System!");

@@ -13,10 +13,11 @@ public class App {
     public static void main(String args[]) throws Exception {
         logger.info("Initializing Parking System");
         InputReaderUtil inputReaderUtil = new InputReaderUtil();
-        ParkingSpotDAO parkingSportDAO = new ParkingSpotDAO();
+        ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
         TicketDAO ticketDAO = new TicketDAO();
-        ParkingService service = new ParkingService(inputReaderUtil, parkingSportDAO, ticketDAO);
+        ParkingService service = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         InteractiveShell interactiveShell = new InteractiveShell(service);
         interactiveShell.loadInterface();
+
     }
 }

@@ -2,6 +2,7 @@ package com.parkit.parkingsystem;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.lang.NullArgumentException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,15 +18,11 @@ import java.util.Scanner;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 public class InputReaderUtilTest {
-
-   // private InputReaderUtil inputReaderUtil;
 
     @BeforeEach
     void setUp()
     {
-     //   inputReaderUtil = new InputReaderUtil();
     }
 
     /**
@@ -38,8 +35,8 @@ public class InputReaderUtilTest {
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
-        InputReaderUtil inputReaderUtil2 = new InputReaderUtil();
-        int result = inputReaderUtil2.readSelection();
+        InputReaderUtil inputReaderUtil = new InputReaderUtil();
+        int result = inputReaderUtil.readSelection();
         assertThat(result).isEqualTo(1);
 
     }
@@ -58,11 +55,6 @@ public class InputReaderUtilTest {
 
    @Test
     void testUserEnterAValidVehicleRegNumber() throws Exception {
-        /*InputReaderUtil inputReaderUtil = new InputReaderUtil();
-        String input = "b";
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);*/
-
        String input = "13421";
        InputStream in = new ByteArrayInputStream(input.getBytes());
        System.setIn(in);
